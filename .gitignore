@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# Local/Backup files
+nikolaus_spiel copy.py
+highscores.txt
