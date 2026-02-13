@@ -30,8 +30,8 @@ python nicecraft.py
 
 1.  Klone dieses Repository:
     ```bash
-    git clone https://github.com/DEIN_USERNAME/Games.git
-    cd Games
+    git clone https://github.com/niklasjosq/games.git
+    cd games
     ```
 
 2.  Installiere die benötigten Abhängigkeiten:
