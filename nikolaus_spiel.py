@@ -151,9 +151,11 @@ class Monster(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
         self.level = level
+        self.speed_y = 0
         self.reset_pos(first_spawn=True)
 
     def reset_pos(self, first_spawn=False):
+        self.speed_y = 0
         if self.level == 1 or self.level == 4:
             self.rect.x = BREITE + random.randint(100, 1000)
             self.rect.y = HOEHE - 90
@@ -173,9 +175,16 @@ class Monster(pygame.sprite.Sprite):
             # Chance auf höhere Position (für Plattformen)
             if random.random() > 0.7:
                 self.rect.y = HOEHE - 270 # Ungefähr Plattformhöhe
-    
+        elif self.level == 5:
+            # Monster fallen von oben
+            self.rect.x = random.randint(0, BREITE - 50)
+            self.rect.y = -80
+            self.speed_y = random.randint(3, 7)
+            self.speed_x = random.choice([-2, -1, 0, 1, 2]) # Leicht schräg
+
     def update(self):
         self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
         
         if self.level == 1 or self.level == 4:
             if self.rect.right < 0:
@@ -187,6 +196,9 @@ class Monster(pygame.sprite.Sprite):
                 self.rect.right = 0
         elif self.level == 3:
             if self.rect.right < 0:
+                self.reset_pos()
+        elif self.level == 5:
+            if self.rect.top > HOEHE:
                 self.reset_pos()
 
 class SchokoladeWurf(pygame.sprite.Sprite):
@@ -359,6 +371,31 @@ def setup_level(level_nr):
             alle_sprites.add(schoko)
             sammel_liste.add(schoko)
 
+    elif level_nr == 5:
+        # Level 5 Setup - Turm klettern
+        # Schräger Turm aus Containern (rechts)
+        # Visuell: Wir fügen sie nur zu alle_sprites hinzu (nicht plattform_liste), 
+        # damit man nicht hängen bleibt, sondern klettert.
+        start_x = BREITE - 180
+        for i in range(10):
+            x_pos = start_x + (i * 8) # Leicht schräg nach rechts
+            y_pos = HOEHE - 60 - (i * 60)
+            
+            if i == 9:
+                # Die oberste Kiste ist das Ziel (Gelb)
+                ziel = Plattform(x_pos, y_pos, 100, 50, GELB)
+                ziel_sprites.add(ziel)
+                alle_sprites.add(ziel)
+            else:
+                p = Plattform(x_pos, y_pos, 100, 50, GRAU)
+                alle_sprites.add(p)
+        
+        # Monster von oben
+        for i in range(6):
+            monster = Monster(level=5)
+            alle_sprites.add(monster)
+            monster_liste.add(monster)
+
     return level_nr
 
 # --- Main Setup ---
@@ -453,7 +490,13 @@ while running:
         elif game_state == "playing":
             # Zeit prüfen
             elapsed_time = current_time - start_ticks
-            if max(0, GAME_DURATION - elapsed_time) == 0:
+            
+            # Standard Zeit oder Level 5 Zeit
+            limit = GAME_DURATION
+            if current_level == 5:
+                limit = 120 * 1000
+                
+            if max(0, limit - elapsed_time) == 0:
                 if current_level == 1:
                     # Level 1: Wenn Zeit abgelaufen -> Weiter zu Level 2
                     game_state = "countdown"
@@ -499,9 +542,22 @@ while running:
                     game_state = "countdown"
                     transition_start_time = current_time
 
-            # Zielbedingung Level 4 -> Sieg
+            # Zielbedingung Level 4 -> Level 5
             if current_level == 4:
                 if level_4_score >= 100:
+                    game_state = "countdown"
+                    transition_start_time = current_time
+
+            # Klettern und Zielbedingung Level 5 -> Sieg
+            if current_level == 5:
+                # Kletter-Logik
+                keys = pygame.key.get_pressed()
+                # Kletterbereich: Rechts im Bild (ungefähr ab Turm-Start)
+                if keys[pygame.K_n] and spieler.rect.x > BREITE - 250:
+                    spieler.change_y = -5 # Klettert hoch (schwerkraft entgegen)
+                
+                # Ziel erreicht (Gelbe Box berührt)
+                if pygame.sprite.spritecollide(spieler, ziel_sprites, False):
                     game_won = True
 
             # Kollision: Schokolade trifft Monster
@@ -561,10 +617,20 @@ while running:
     
     # Zeit berechnen für Anzeige
     elapsed_time = current_time - start_ticks
-    time_left_seconds = max(0, (GAME_DURATION - elapsed_time) // 1000)
+    
+    # Standard Zeit
+    current_game_duration = GAME_DURATION
+    
+    # Level 5 hat mehr Zeit
+    if current_level == 5:
+        current_game_duration = 120 * 1000
+
+    time_left_seconds = max(0, (current_game_duration - elapsed_time) // 1000)
     
     if current_level == 4:
         text = font.render(f"Punkte: {score} (Ziel: {level_4_score}/100) | Level: {current_level} | Zeit: {time_left_seconds}s", True, SCHWARZ)
+    elif current_level == 5:
+        text = font.render(f"LEVEL 5: Drücke 'N' am Turm zum Klettern! Weiche den Monstern aus! Zeit: {time_left_seconds}s", True, SCHWARZ)
     else:
         text = font.render(f"Punkte: {score} | Level: {current_level} | Zeit: {time_left_seconds}s", True, SCHWARZ)
     screen.blit(text, [10, 10])
