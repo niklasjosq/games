@@ -14,3 +14,11 @@ venv/
 
 # Punkte der alten Desktop-Version (die Web-Plattform speichert im Browser)
 legacy/highscores.txt
+
+# Nie mit veroeffentlichen: alles, was nach Zugangsdaten aussieht
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+.env
+.env.*

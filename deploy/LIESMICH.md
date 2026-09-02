@@ -34,8 +34,8 @@ Datenbank und kein Backup — ein Deploy ist immer folgenlos.
 
 ```bash
 SPIELE_SSH_KEY=~/.ssh/jetson ./deploy/deploy-jetson.sh benutzer@jetson.local
-SPIELE_REMOTE_DIR='~/spiele'  ./deploy/deploy-jetson.sh benutzer@…   # anderes Verzeichnis
-SPIELE_NETWORK=bridge         ./deploy/deploy-jetson.sh benutzer@…   # siehe unten
+SPIELE_REMOTE_DIR='~/spiele'  ./deploy/deploy-jetson.sh benutzer@…  # anderes Verzeichnis
+SPIELE_NETWORK=bridge         ./deploy/deploy-jetson.sh benutzer@…  # siehe unten
 ./deploy/deploy-jetson.sh --help
 ```
 
