@@ -212,8 +212,6 @@ passwordless_sudo() { ssh_ "$TARGET" 'sudo -n true >/dev/null 2>&1'; }
 
 if ssh_ "$TARGET" 'docker ps >/dev/null 2>&1'; then
   SUDO=""
-  # (Der Schnappschuss der laufenden Container folgt weiter unten,
-  #  sobald klar ist, ob Docker sudo braucht.)
 else
   passwordless_sudo || die "Docker auf $TARGET erfordert sudo, und sudo verlangt ein Passwort.
 Nutzer dauerhaft berechtigen (einmalig, danach ab- und wieder anmelden):
@@ -252,7 +250,7 @@ Zwei Wege:
      (also SPIELE_REMOTE_DIR nicht setzen)"
 fi
 
-# --- Ist Port 8080 frei? --------------------------------------------------
+# --- Ist der Port frei? ---------------------------------------------------
 # Im host-Netzwerk belegt der Container den Port direkt. Hat sich dort etwas
 # anderes eingenistet (nicht unser eigener Container), soll das Deploy es
 # sagen, statt mit einer unklaren Fehlermeldung zu scheitern.
