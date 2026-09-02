@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mathe üben und testen</title>
+<link rel="stylesheet" href="../../shared/basis.css">
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<div id="sterne"></div>
+
+<main id="buehne" class="weit">
+
+  <!-- ================= ÜBERSICHT ================= -->
+  <section id="uebersicht" class="bildschirm aktiv">
+    <a class="zurueck" href="../../index.html">← Zurück zur Übersicht</a>
+
+    <h1 class="titel">📚 Mathe</h1>
+    <p class="untertitel">Erst üben, dann testen. Beim Üben darfst du so viel falsch machen, wie du willst!</p>
+
+    <nav class="klassenwahl" id="klassenwahl"></nav>
+
+    <div class="karte breit">
+      <div class="wersieht">
+        <span id="uebersichtWer">Als Gast — dein Fortschritt wird nicht gespeichert.</span>
+      </div>
+    </div>
+
+    <div id="lektionen" class="lektionen"></div>
+  </section>
+
+  <!-- ================= ÜBEN ================= -->
+  <section id="uebung" class="bildschirm">
+    <div class="aufgabenkopf">
+      <span id="uebungTitel">Lektion</span>
+      <span>✅ <b id="uebungRichtig">0</b> von <b id="uebungGesamt">0</b></span>
+      <span>🔥 Serie: <b id="uebungSerie">0</b></span>
+      <button id="uebungFertig" class="klein">Fertig</button>
+    </div>
+
+    <div class="karte aufgabenkarte">
+      <p class="frage" id="uebungFrage"></p>
+      <div class="antwortzeile" id="uebungAntwortzeile"></div>
+      <div class="meldung" id="uebungMeldung"></div>
+      <p class="tipp versteckt" id="uebungTipp"></p>
+      <button id="uebungWeiter" class="gross">Prüfen</button>
+    </div>
+  </section>
+
+  <!-- ================= TEST ================= -->
+  <section id="test" class="bildschirm">
+    <div class="aufgabenkopf">
+      <span id="testTitel">Test</span>
+      <span>Aufgabe <b id="testNummer">1</b> von <b id="testAnzahl">10</b></span>
+      <span id="testUhr">⏱️ <b id="testZeit">5:00</b></span>
+      <button id="testAbbrechen" class="klein gefahr">Abbrechen</button>
+    </div>
+
+    <div class="fortschrittsleiste"><span id="testBalken"></span></div>
+
+    <div class="karte aufgabenkarte">
+      <p class="frage" id="testFrage"></p>
+      <div class="antwortzeile" id="testAntwortzeile"></div>
+      <p class="hinweistext">Im Test bekommst du erst am Ende zu sehen, was richtig war.</p>
+      <button id="testWeiter" class="gross blau">Weiter</button>
+    </div>
+  </section>
+
+  <!-- ================= ERGEBNIS ================= -->
+  <section id="ergebnis" class="bildschirm">
+    <h1 class="titel">📝 Testergebnis</h1>
+
+    <div class="karte">
+      <div class="notenkasten">
+        <span class="note" id="ergebnisNote">1</span>
+        <span class="notentext" id="ergebnisNotenText">sehr gut</span>
+      </div>
+
+      <p class="grosszahl" id="ergebnisPunkte">0 von 10 richtig</p>
+      <p class="hinweistext" id="ergebnisZusatz"></p>
+
+      <h2>Das waren die Aufgaben</h2>
+      <ol class="rueckblick" id="ergebnisRueckblick"></ol>
+
+      <button id="ergebnisNochmal" class="gross">Test nochmal schreiben 🔁</button>
+      <div class="knopfreihe">
+        <button id="ergebnisUeben" class="klein">Stattdessen üben</button>
+        <button id="ergebnisZurueck" class="klein">Zur Übersicht</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="../../shared/speicher.js"></script>
+<script src="../../shared/profil.js"></script>
+<script src="aufgaben.js"></script>
+<script src="aufgaben-klasse3.js"></script>
+<script src="aufgaben-klasse5.js"></script>
+<script src="mathe.js"></script>
+</body>
+</html>

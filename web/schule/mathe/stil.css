@@ -1,0 +1,201 @@
+/* ============================================================
+   MATHE — Aussehen der Lektionsübersicht, Übung, Test, Ergebnis.
+   Das Grundgerüst steht in shared/basis.css.
+   ============================================================ */
+
+/* ---------------- Klassenstufe wählen ---------------- */
+
+.klassenwahl { display: flex; gap: 12px; flex-wrap: wrap; width: 100%; }
+
+.klassentab {
+  flex: 1 1 180px;
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .07);
+  border: 2px solid transparent;
+  transition: background .15s, transform .1s;
+}
+.klassentab:hover { background: rgba(255, 255, 255, .16); }
+.klassentab b { font-size: 21px; }
+.klassentab small { font-size: 15px; opacity: .7; }
+.klassentab.aktiv {
+  background: linear-gradient(180deg, rgba(155, 107, 255, .4), rgba(90, 50, 180, .2));
+  border-color: #d3bcff;
+  box-shadow: 0 0 20px rgba(155, 107, 255, .35);
+}
+
+.wersieht { text-align: center; font-size: 16px; }
+.wersieht a { color: var(--text-leise); }
+
+/* ---------------- Lektionen ---------------- */
+
+.lektionen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.lektion {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border-radius: 22px;
+  background: var(--karte);
+  border: 2px solid var(--rand);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+}
+.lektionsymbol { font-size: 42px; line-height: 1; }
+.lektion h3 { font-size: 21px; }
+.lektiontext { font-size: 16px; opacity: .8; line-height: 1.45; flex: 1; }
+
+.lektionstand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: var(--text-leise);
+  padding-top: 10px;
+  border-top: 1px solid rgba(120, 170, 255, .2);
+}
+
+.lektionknoepfe { display: flex; gap: 10px; flex-wrap: wrap; }
+.lektionknoepfe .gross { flex: 1 1 130px; margin-top: 10px; font-size: 18px; min-height: 54px; }
+
+/* ---------------- Aufgabenbildschirme ---------------- */
+
+.aufgabenkopf {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 700px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: var(--karte);
+  border: 2px solid var(--rand);
+  font-size: 17px;
+}
+.aufgabenkopf b { color: var(--gelb); }
+.aufgabenkopf button { margin-left: auto; }
+#testUhr.knapp b { color: var(--rot); animation: pochen 1s infinite; }
+@keyframes pochen { 50% { opacity: .35; } }
+
+.fortschrittsleiste {
+  width: 100%;
+  max-width: 700px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  overflow: hidden;
+}
+.fortschrittsleiste span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--blau), var(--gruen));
+  transition: width .3s;
+}
+
+.aufgabenkarte { max-width: 700px; text-align: center; }
+
+.frage {
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: pre-line;      /* damit \n in der Aufgabe wirkt */
+  margin: 10px 0 22px;
+}
+
+.antwortzeile {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.antwortfeld {
+  width: 120px;
+  font-size: 28px !important;
+  font-weight: 700;
+  padding: 14px 10px !important;
+}
+.antwortfeld.breit { width: 220px; }
+.antwortfeld:disabled { opacity: .75; }
+
+.zwischenwort { font-size: 20px; opacity: .8; }
+.einheit { font-size: 24px; font-weight: 700; color: var(--gelb); }
+
+.tipp {
+  font-size: 17px;
+  line-height: 1.55;
+  text-align: left;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 210, 63, .12);
+  border: 1px solid rgba(255, 210, 63, .4);
+}
+
+/* ---------------- Ergebnis ---------------- */
+
+.notenkasten {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+.note {
+  font-size: 84px;
+  font-weight: 800;
+  line-height: 1;
+}
+.notentext { font-size: 20px; opacity: .8; }
+
+.note-1 { color: #2fd07a; }
+.note-2 { color: #8fd94a; }
+.note-3 { color: var(--gelb); }
+.note-4 { color: var(--orange); }
+.note-5 { color: #ff7a5c; }
+.note-6 { color: var(--rot); }
+
+.grosszahl {
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  margin: 6px 0;
+}
+
+.rueckblick { list-style: none; text-align: left; }
+.rueckblick li {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  border-left: 4px solid transparent;
+}
+.rueckblick li.war-richtig {
+  background: rgba(47, 208, 122, .1);
+  border-left-color: var(--gruen);
+}
+.rueckblick li.war-falsch {
+  background: rgba(255, 84, 112, .1);
+  border-left-color: var(--rot);
+}
+.rueckFrage { font-weight: 600; }
+.rueckAntwort { font-size: 15px; opacity: .85; }
+.rueckAntwort s { opacity: .7; }
+.rueckAntwort b { color: var(--gruen); }
