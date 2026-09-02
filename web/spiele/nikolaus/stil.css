@@ -1,0 +1,85 @@
+/* ============================================================
+   NIKOLAUS — Aussehen der Landing-Page und des Spielbildschirms.
+   Das Grundgerüst steht in shared/basis.css.
+   ============================================================ */
+
+/* ---------------- Landing-Page ---------------- */
+
+.startspalten {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
+  width: 100%;
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .startspalten { grid-template-columns: 1fr; }
+}
+.startspalten .karte { max-width: none; }
+
+.fliesstext { line-height: 1.6; opacity: .9; }
+
+.levelliste { padding-left: 24px; line-height: 1.7; }
+.levelliste li { margin-bottom: 4px; }
+.levelliste b { color: var(--gelb); }
+
+.grosszahl {
+  font-size: 34px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--gelb);
+  margin: 6px 0;
+}
+
+/* ---------------- Spielbildschirm ---------------- */
+
+.hud {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: var(--karte);
+  border: 2px solid var(--rand);
+  font-size: 18px;
+}
+.hud b { color: var(--gelb); font-size: 20px; }
+.hud button { margin-left: auto; }
+
+#leinwand {
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  border: 3px solid var(--rand);
+  background: #fff;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+  image-rendering: auto;
+}
+
+.tastenhilfe { font-size: 15px; opacity: .75; text-align: center; line-height: 2.2; }
+
+/* ---------------- Endbildschirm ---------------- */
+
+.titel.gruen { color: var(--gruen); text-shadow: 0 0 22px rgba(47, 208, 122, .7); }
+.titel.rot   { color: var(--rot);   text-shadow: 0 0 22px rgba(255, 84, 112, .7); }
+
+/* ---------------- Pause-Fenster ---------------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 6, 26, .85);
+}
+.overlay.offen { display: flex; }
+.overlay .karte { text-align: center; }
+.overlay .klein { margin-top: 12px; }

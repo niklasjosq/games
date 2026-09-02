@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nikolaus vs. Mutanten-Minions</title>
+<link rel="stylesheet" href="../../shared/basis.css">
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<div id="sterne"></div>
+
+<main id="buehne" class="weit">
+
+  <!-- ================= LANDING-PAGE ================= -->
+  <section id="start" class="bildschirm aktiv">
+    <a class="zurueck" href="../../index.html">← Zurück zur Übersicht</a>
+
+    <h1 class="titel">🎅 Nikolaus vs. Mutanten-Minions</h1>
+    <p class="untertitel">Fünf Level voller Schokolade, Wasserlöcher und fieser Minions.</p>
+
+    <div class="startspalten">
+
+      <div class="karte">
+        <h2>Worum geht's?</h2>
+        <p class="fliesstext">
+          Die Mutanten-Minions wollen dem Nikolaus die Schokolade klauen!
+          Wirf Schokolade auf die Minions, sammle so viel ein wie du kannst und
+          arbeite dich durch fünf Level bis zum Turm.
+        </p>
+
+        <h2>Die fünf Level</h2>
+        <ol class="levelliste">
+          <li><b>Wiese</b> — halte 20 Sekunden durch und sammle Schokolade.</li>
+          <li><b>Kisten und Turm</b> — klettere über die Kisten auf den Turm rechts.</li>
+          <li><b>Wasserlöcher</b> — spring über das Wasser zur gelben Plattform.</li>
+          <li><b>Wettrennen</b> — hol 100 Punkte Schokolade, bevor die Minions sie fressen.</li>
+          <li><b>Der Turm</b> — halte <kbd>N</kbd> zum Klettern und weiche den fallenden Minions aus.</li>
+        </ol>
+
+        <h2>Steuerung</h2>
+        <table class="tastentabelle">
+          <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>laufen</td></tr>
+          <tr><td><kbd>↑</kbd></td><td>springen</td></tr>
+          <tr><td><kbd>Leertaste</kbd></td><td>Schokolade werfen (mit <kbd>↑</kbd>/<kbd>↓</kbd> nach oben oder unten zielen)</td></tr>
+          <tr><td><kbd>N</kbd></td><td>im letzten Level am Turm klettern</td></tr>
+          <tr><td><kbd>P</kbd></td><td>Pause</td></tr>
+        </table>
+
+        <button id="knopfStart" class="gross">Los geht's! 🍫</button>
+      </div>
+
+      <div class="karte schmal">
+        <h2>Deine Punkte</h2>
+        <p id="deinBestwert" class="grosszahl">–</p>
+        <p class="hinweistext" id="werSpielt">Als Gast — Punkte werden nicht gespeichert.</p>
+
+        <h2>🏆 Bestenliste</h2>
+        <ol id="bestenliste" class="bestenliste">
+          <li class="leer">Noch keine Punkte</li>
+        </ol>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= SPIELBILDSCHIRM ================= -->
+  <section id="spiel" class="bildschirm">
+    <div class="hud">
+      <span>🍫 <b id="hudPunkte">0</b> Punkte</span>
+      <span>Level <b id="hudLevel">1</b> / 5</span>
+      <span id="hudZiel" class="versteckt">Ziel: <b id="hudZielWert">0</b>/100</span>
+      <span>⏱️ <b id="hudZeit">20</b> s</span>
+      <button id="knopfPause" class="klein">Pause</button>
+    </div>
+
+    <canvas id="leinwand" width="800" height="600"></canvas>
+
+    <p class="tastenhilfe">
+      <kbd>←</kbd> <kbd>→</kbd> laufen · <kbd>↑</kbd> springen ·
+      <kbd>Leertaste</kbd> werfen · <kbd>N</kbd> klettern (Level 5) · <kbd>P</kbd> Pause
+    </p>
+  </section>
+
+  <!-- ================= ENDBILDSCHIRM ================= -->
+  <section id="ende" class="bildschirm">
+    <h1 class="titel" id="endeTitel">Game Over</h1>
+
+    <div class="karte schmal">
+      <p class="fliesstext" id="endeGrund"></p>
+      <p class="grosszahl" id="endePunkte">0</p>
+      <p class="hinweistext" id="endeZusatz"></p>
+
+      <h2>🏆 Bestenliste</h2>
+      <ol id="endeBestenliste" class="bestenliste"></ol>
+
+      <button id="knopfNochmal" class="gross">Nochmal spielen 🔁</button>
+      <div class="knopfreihe">
+        <a class="zurueck" href="../../index.html">← Zurück zur Übersicht</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PAUSE ================= -->
+  <div id="pause" class="overlay">
+    <div class="karte schmal">
+      <h1 class="titel">⏸️ Pause</h1>
+      <button id="knopfWeiter" class="gross">Weiterspielen</button>
+      <button id="knopfAufgeben" class="klein">Aufgeben</button>
+    </div>
+  </div>
+
+</main>
+
+<script src="../../shared/speicher.js"></script>
+<script src="../../shared/profil.js"></script>
+<script src="level.js"></script>
+<script src="spiel.js"></script>
+<script src="seite.js"></script>
+</body>
+</html>
