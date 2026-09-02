@@ -2,6 +2,17 @@ import pygame
 import random
 import os
 
+# Die Bilder liegen seit der Umstrukturierung beim Web-Spiel.
+BILDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                      "..", "web", "spiele", "nikolaus", "bilder")
+HIGHSCORE_DATEI = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "highscores.txt")
+
+
+def bild(name):
+    return os.path.join(BILDER, name)
+
+
 # --- Spielernamen abfragen ---
 print("--- WILLKOMMEN ZUM NIKOLAUS SPIEL CREIF ---")
 spieler_name = input("Bitte gib deinen Namen ein: ")
@@ -66,7 +77,7 @@ class Spieler(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         try:
-            self.image = pygame.image.load("nikolaus.png").convert_alpha()
+            self.image = pygame.image.load(bild("nikolaus.png")).convert_alpha()
             self.image = pygame.transform.scale(self.image, (50, 70))
         except:
             self.image = pygame.Surface((50, 70))
@@ -143,7 +154,7 @@ class Monster(pygame.sprite.Sprite):
     def __init__(self, level=1):
         super().__init__()
         try:
-            self.image = pygame.image.load("monster.png").convert_alpha()
+            self.image = pygame.image.load(bild("monster.png")).convert_alpha()
             self.image = pygame.transform.scale(self.image, (50, 70))
         except:
             self.image = pygame.Surface((50, 70))
@@ -224,7 +235,7 @@ class SammelObjekt(pygame.sprite.Sprite):
         #self.image = pygame.Surface((20, 20))
         #self.image.fill(GELB)
 
-        self.image = pygame.image.load("schoko.png").convert_alpha()
+        self.image = pygame.image.load(bild("schoko.png")).convert_alpha()
         # Ggf. Größe anpassen:
         self.image = pygame.transform.scale(self.image, (50, 70))
         
@@ -238,8 +249,8 @@ class SammelObjekt(pygame.sprite.Sprite):
 # --- Highscore Funktionen ---
 def load_highscores():
     scores = []
-    if os.path.exists("highscores.txt"):
-        with open("highscores.txt", "r") as f:
+    if os.path.exists(HIGHSCORE_DATEI):
+        with open(HIGHSCORE_DATEI, "r") as f:
             for line in f:
                 try:
                     parts = line.strip().split(",")
@@ -252,7 +263,7 @@ def load_highscores():
     return scores
 
 def save_highscore(name, score):
-    with open("highscores.txt", "a") as f:
+    with open(HIGHSCORE_DATEI, "a") as f:
         f.write(f"{name},{score}\n")
 
 # --- Setup Funktion ---

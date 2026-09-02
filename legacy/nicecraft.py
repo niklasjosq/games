@@ -11,7 +11,8 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 # Startet das Spiel
-icon_file = Path(__file__).parent / "monster.png"
+icon_file = (Path(__file__).parent / ".." / "web" / "spiele" / "nikolaus"
+             / "bilder" / "monster.png")
 icon_path = str(icon_file.resolve()) if icon_file.exists() else None
 app = Ursina(icon=icon_path)
 
