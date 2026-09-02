@@ -71,14 +71,25 @@ console.log('\n=== TEST: Aufbau der Level ===');
   gleich(lauf('macheLevel(1).schokos.length'), 5, 'Level 1 hat 5 Schokoladen');
   gleich(lauf('macheLevel(1).zeitLimit'), 20, 'Level 1 dauert 20 Sekunden');
 
-  gleich(lauf('macheLevel(2).plattformen.length'), 8, 'Level 2 hat 3 Plattformen + 5 Turmteile');
+  gleich(lauf('macheLevel(2).plattformen.length'), 6, 'Level 2 hat 3 Plattformen + 3 Treppenstufen');
+  gleich(lauf('macheLevel(2).ziele.length'), 1, 'die oberste Stufe ist das Ziel');
+  gleich(lauf('macheLevel(2).ziele[0].farbe'), '#ffd700', 'und sie ist gelb');
+  // Damit man auf einer Stufe stehen kann, muss zwischen zwei Stufen
+  // mehr Platz sein als der Spieler hoch ist
+  pruefe(lauf('STUFEN_ABSTAND - STUFEN_DICKE') > lauf('SPIELER_HOEHE'),
+         'zwischen zwei Treppenstufen passt Nikolaus hindurch');
+  pruefe(lauf('STUFEN_ABSTAND') < 143, 'und er kann von Stufe zu Stufe springen');
   gleich(lauf('macheLevel(2).monster.length'), 0, 'in Level 2 sind am Anfang keine Monster da');
   gleich(lauf('macheLevel(2).monsterSpaeter'), 5, 'in Level 2 kommen 5 Monster später');
 
   gleich(lauf('macheLevel(3).wasser.length'), 2, 'Level 3 hat 2 Wasserlöcher');
   gleich(lauf('macheLevel(3).ziele.length'), 1, 'Level 3 hat eine Zielplattform');
   gleich(lauf('macheLevel(3).monster.length'), 4, 'Level 3 hat 4 Monster');
-  gleich(lauf('macheLevel(3).monster[0].vx > 0'), true, 'das Plattform-Monster läuft nach rechts');
+  gleich(lauf('macheLevel(3).monster.every(m => m.vx < 0)'), true,
+         'sie kommen alle von rechts');
+  gleich(lauf('macheLevel(3).plattformen.length'), 1,
+         'in Level 3 steht nur der gelbe Zielklotz (freier Anlauf vor dem Wasser)');
+  gleich(lauf('macheLevel(3).ziele[0].farbe'), '#ffd700', 'und der ist gelb');
 
   gleich(lauf('macheLevel(4).monster.length'), 5, 'Level 4 hat 5 Monster');
   gleich(lauf('macheLevel(4).schokos.length'), 8, 'Level 4 hat 8 Schokoladen');
@@ -241,6 +252,49 @@ console.log('\n=== TEST: Level 2 — Turm und späte Monster ===');
   gleich(lauf('SPIEL.status'), 'countdown', 'oben rechts auf dem Turm ist Level 2 geschafft');
 }
 
+/* Der wichtigste Test für Level 2: kann man die Treppe wirklich
+   hochspringen? Wir spielen es durch — laufen, springen, warten. */
+console.log('\n=== TEST: Level 2 ist auch schaffbar ===');
+{
+  const k = frischeWelt();
+  const lauf = w(k);
+  lauf('starteSpiel(); starteLevel(2)');
+  lauf('SPIEL.daten.monster = []; SPIEL.monsterKommenNoch = 0');
+
+  const stufen = lauf('SPIEL.daten.plattformen.slice(3)');
+
+  // So spielt ein Kind: bis kurz vor die Stufe laufen, springen,
+  // und in der Luft weiter nach rechts halten.
+  for (let nr = 0; nr < stufen.length; nr++) {
+    const stufe = stufen[nr];
+    const zielHoehe = stufe.y - lauf('SPIELER_HOEHE');
+    const absprungX = stufe.x - lauf('SPIELER_BREITE');    // direkt links daneben
+    let oben = false;
+
+    for (let bild = 0; bild < 180 && !oben; bild++) {
+      const s = lauf('SPIEL.spieler');
+      const steht = Math.abs(s.vy) < 1;
+
+      // Links neben der Stufe angekommen und stehe fest? Dann springen.
+      if (steht && s.y > zielHoehe && s.x >= absprungX - 12) lauf('springe()');
+
+      // Vor dem Absprung hinlaufen, danach in der Luft weiter halten
+      lauf('TASTEN.rechts = ' + (s.x < stufe.x + 10));
+      lauf('rechne(1/60)');
+
+      if (Math.abs(lauf('SPIEL.spieler.y') - zielHoehe) < 2) oben = true;
+      if (lauf('SPIEL.status') !== 'laeuft') break;
+    }
+    lauf('TASTEN.rechts = false');
+
+    if (lauf('SPIEL.status') !== 'laeuft') break;    // Ziel schon berührt
+    pruefe(oben, 'Nikolaus kommt auf Stufe ' + (nr + 1) + ' (Höhe ' + stufe.y + ')');
+  }
+
+  gleich(lauf('SPIEL.status'), 'countdown',
+         'Level 2 lässt sich durch Springen wirklich schaffen');
+}
+
 console.log('\n=== TEST: Level 2 — Zeit um heißt verloren ===');
 {
   const k = frischeWelt();
@@ -252,6 +306,95 @@ console.log('\n=== TEST: Level 2 — Zeit um heißt verloren ===');
   spieleZeit(k, 20.5);
   gleich(lauf('SPIEL.status'), 'verloren', 'ab Level 2 ist Zeit-um verloren');
   gleich(lauf('SPIEL.grund'), 'Die Zeit ist um!', 'und der Grund steht dran');
+}
+
+/* Level 3 ist ein Sprung-Level: über zwei Wasserlöcher bis zum gelben
+   Klotz. Ein kleiner Automat spielt es so, wie ein Kind es tun würde:
+   nach rechts laufen und rechtzeitig vor dem Wasser springen.
+
+   Der Automat liest die Wasserlöcher aus dem Level — wenn jemand das
+   Level umbaut, prüft der Test also weiter das Richtige. "Rechtzeitig"
+   probieren wir mit verschiedenen Vorlaufweiten, weil ein Kind auch
+   nicht auf den Pixel genau springt. */
+console.log('\n=== TEST: Level 3 ist schaffbar ===');
+{
+  const vorlaufWeiten = [10, 25, 40, 55, 70, 85];
+  let gelungen = 0;
+
+  for (const vorlauf of vorlaufWeiten) {
+    const k = frischeWelt();
+    const lauf = w(k);
+    lauf('starteSpiel(); starteLevel(3)');
+    lauf('SPIEL.daten.monster = []');          // erst mal ohne Gegner
+
+    const loecher = lauf('SPIEL.daten.wasser');
+    const breite = lauf('SPIELER_BREITE');
+
+    for (let bild = 0; bild < 60 * 19; bild++) {
+      const s = lauf('SPIEL.spieler');
+      const steht = Math.abs(s.vy) < 1;
+
+      // Immer nach rechts
+      lauf('TASTEN.rechts = true');
+
+      // Kommt ein Wasserloch? Dann springen, solange wir noch stehen.
+      if (steht) {
+        let springen = false;
+        for (const loch of loecher) {
+          const abstand = loch.x - (s.x + breite);
+          if (abstand >= 0 && abstand <= vorlauf) springen = true;
+        }
+        // Oder steht der gelbe Klotz im Weg? Dann auch springen.
+        for (const z of lauf('SPIEL.daten.ziele')) {
+          const abstand = z.x - (s.x + breite);
+          if (abstand >= 0 && abstand <= 6) springen = true;
+        }
+        if (springen) lauf('springe()');
+      }
+
+      lauf('rechne(1/60)');
+      if (lauf('SPIEL.status') !== 'laeuft') break;
+    }
+    if (lauf('SPIEL.status') === 'countdown') gelungen++;
+  }
+
+  pruefe(gelungen > 0,
+         'Level 3 ist zu schaffen (' + gelungen + ' von ' + vorlaufWeiten.length +
+         ' Absprungweiten führen zum Ziel)');
+  pruefe(gelungen >= 3,
+         'und man muss dafür nicht auf den Pixel genau springen');
+}
+
+/* Level 4 ist ein Sammel-Level: 100 Punkte in 20 Sekunden.
+   Reicht die Zeit dafür überhaupt? */
+console.log('\n=== TEST: Level 4 ist schaffbar ===');
+{
+  let siege = 0;
+  for (let versuch = 0; versuch < 5; versuch++) {
+    const k = frischeWelt();
+    const lauf = w(k);
+    lauf('starteSpiel(); starteLevel(4)');
+    lauf('SPIEL.daten.monster = []');      // erst mal ohne Gegner
+
+    for (let bild = 0; bild < 60 * 21; bild++) {
+      // Immer zur nächstgelegenen Schokolade laufen
+      const s = lauf('SPIEL.spieler');
+      const schokos = lauf('SPIEL.daten.schokos');
+      let naechste = null, kuerzeste = Infinity;
+      for (const c of schokos) {
+        const d = Math.abs(c.x - s.x);
+        if (d < kuerzeste) { kuerzeste = d; naechste = c; }
+      }
+      if (naechste) {
+        lauf('TASTEN.rechts = ' + (naechste.x > s.x));
+        lauf('TASTEN.links = ' + (naechste.x < s.x));
+      }
+      lauf('rechne(1/60)');
+      if (lauf('SPIEL.status') !== 'laeuft') break;
+    }
+    if (lauf('SPIEL.status') === 'countdown') siege++;
+  }
+  gleich(siege, 5, 'die 100 Sammelpunkte sind in 20 Sekunden zu holen');
 }
 
 console.log('\n=== TEST: Level 3 — Wasser und Ziel ===');

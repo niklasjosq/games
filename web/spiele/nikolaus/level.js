@@ -45,6 +45,30 @@ const FARBEN = {
 /* Wie weit ragt das Wasser über die Wiesenkante? (siehe Level 3) */
 const WASSER_RAND = 12;
 
+/* Die Treppe in Level 2. Zwei Regeln müssen stimmen, sonst ist das
+   Level nicht zu schaffen:
+
+   1) Höhe:  STUFEN_ABSTAND − STUFEN_DICKE > Spielerhöhe (70)
+      Sonst stößt Nikolaus mit dem Kopf an die nächste Stufe und
+      kann gar nicht auf der unteren stehen.   95 − 20 = 75 ✓
+      Und STUFEN_ABSTAND < Sprunghöhe (143), sonst kommt er nicht hoch.
+
+   2) Seite: STUFEN_VERSATZ > STUFEN_BREITE
+      Die Stufen dürfen sich nicht überlappen — sonst steht Nikolaus
+      beim Absprung unter der nächsten Stufe und stößt sich den Kopf.
+
+   Der Test in test/test-spiel.js springt die Treppe wirklich hoch
+   und merkt, wenn hier etwas nicht mehr passt. */
+const STUFEN_ANZAHL = 3;
+const STUFEN_ABSTAND = 95;
+const STUFEN_DICKE = 20;
+const STUFEN_BREITE = 80;
+const STUFEN_VERSATZ = 95;
+const STUFEN_START_X = 520;
+
+/* Wie hoch ist der gelbe Zielklotz in Level 3? */
+const ZIEL_KLOTZ_HOEHE = 70;
+
 /* ---------- Zeit pro Level (Sekunden) ---------- */
 const ZEIT_NORMAL = 20;
 const ZEIT_LEVEL5 = 120;
@@ -182,14 +206,28 @@ function macheLevel(nr) {
       { x: 400, y: HOEHE - 250, b: 120, h: 20, farbe: FARBEN.baumstamm },
       { x: 100, y: HOEHE - 300, b: 80,  h: 20, farbe: FARBEN.kiste }
     );
-    // Container-Turm rechts — da muss Nikolaus hoch
-    for (let i = 0; i < 5; i++) {
-      level.plattformen.push({
-        x: 700, y: HOEHE - 60 - (i + 1) * 60, b: 80, h: 50, farbe: FARBEN.container
-      });
+
+    // Die Treppe nach oben rechts. Die Stufen müssen weit genug
+    // auseinander liegen, damit Nikolaus (70 px hoch) dazwischen passt:
+    // STUFEN_ABSTAND − Stufendicke muss größer als 70 sein.
+    // (Im alten Python-Spiel standen die Container direkt aufeinander —
+    //  damit war der Turm eine geschlossene Wand und Level 2 nicht
+    //  zu schaffen.)
+    for (let i = 0; i < STUFEN_ANZAHL; i++) {
+      const oberste = i === STUFEN_ANZAHL - 1;
+      const stufe = {
+        x: STUFEN_START_X + i * STUFEN_VERSATZ,
+        y: BODEN - STUFEN_ABSTAND * (i + 1),
+        b: STUFEN_BREITE,
+        h: STUFEN_DICKE,
+        farbe: oberste ? FARBEN.ziel : (i === 1 ? FARBEN.baumstamm : FARBEN.kiste)
+      };
+      level.plattformen.push(stufe);
+      if (oberste) level.ziele.push(stufe);      // die gelbe Stufe ist das Ziel
     }
+
     level.monsterSpaeter = 5;
-    level.hinweis = 'Klettere über die Kisten auf den Turm rechts! In 5 Sekunden kommen die Minions.';
+    level.hinweis = 'Spring die Treppe hoch bis zur gelben Stufe! In 5 Sekunden kommen die Minions.';
 
   } else if (nr === 3) {
     // Löcher in der Wiese. Sie reichen ein Stück über die Wiesenkante
@@ -197,26 +235,25 @@ function macheLevel(nr) {
     // (Genau das war ein Fehler in der alten Python-Fassung.)
     level.wasser.push(
       { x: 200, y: BODEN - WASSER_RAND, b: 80, h: 60 + WASSER_RAND },
-      { x: 500, y: BODEN - WASSER_RAND, b: 80, h: 60 + WASSER_RAND }
+      { x: 480, y: BODEN - WASSER_RAND, b: 80, h: 60 + WASSER_RAND }
     );
-    level.plattformen.push(
-      { x: 200, y: HOEHE - 170, b: 100, h: 20, farbe: FARBEN.kiste },
-      { x: 520, y: HOEHE - 170, b: 100, h: 20, farbe: FARBEN.kiste },
-      { x: 370, y: HOEHE - 300, b: 100, h: 20, farbe: FARBEN.baumstamm }
-    );
-    // Gelbe Zielplattform rechts
-    const ziel = { x: 680, y: HOEHE - 250, b: 100, h: 20, farbe: FARBEN.ziel };
+
+    // Hier stehen bewusst KEINE schwebenden Kisten. Vor einem Loch
+    // braucht man freien Anlauf — steht eine Kiste im Weg, stößt man
+    // beim Absprung mit dem Kopf an und fällt ins Wasser. Das Level
+    // hat schon genug Aufgabe mit den beiden Löchern.
+
+    // Das Ziel ist ein gelber Klotz, der auf der Wiese steht. Ihn
+    // einfach zu berühren genügt — an einen Klotz am Boden kann man
+    // sich anlehnen, das ist viel freundlicher als eine schwebende
+    // Plattform, die man treffen muss.
+    const ziel = { x: 650, y: BODEN - ZIEL_KLOTZ_HOEHE, b: 120,
+                   h: ZIEL_KLOTZ_HOEHE, farbe: FARBEN.ziel };
     level.plattformen.push(ziel);
     level.ziele.push(ziel);
 
-    // Ein Monster patrouilliert oben auf der hohen Plattform
-    const oben = macheMonster(3);
-    oben.x = 380;
-    oben.y = HOEHE - 300 - SPIELER_HOEHE;
-    oben.vx = 2 * 60;
-    level.monster.push(oben);
-    for (let i = 0; i < 3; i++) level.monster.push(macheMonster(3));
-    level.hinweis = 'Nicht ins Wasser fallen! Spring auf die gelbe Plattform rechts.';
+    for (let i = 0; i < 4; i++) level.monster.push(macheMonster(3));
+    level.hinweis = 'Spring über die Wasserlöcher bis zum gelben Klotz rechts!';
 
   } else if (nr === 4) {
     for (let i = 0; i < 5; i++) level.monster.push(macheMonster(4));
