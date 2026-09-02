@@ -1,0 +1,22 @@
+# Nur web/ soll ins Image. Alles andere macht den Build-Kontext groß
+# und hätte im Container nichts zu suchen.
+
+.git
+.gitignore
+.venv
+.vscode
+**/__pycache__
+**/*.py[cod]
+.DS_Store
+
+# Die alten Desktop-Spiele laufen nicht auf dem Jetson
+legacy/
+
+# Deploy-Werkzeug und Tests gehören nicht in den ausgelieferten Container
+deploy/
+tests.sh
+rauchtest.sh
+**/test/
+
+# Dokumentation
+README.md

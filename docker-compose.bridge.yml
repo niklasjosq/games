@@ -1,0 +1,64 @@
+# Alternative zu docker-compose.yml: Betrieb im Docker-Bridge-Netzwerk mit
+# veröffentlichtem Port. Damit bekommt der Container zusätzlich seinen
+# eigenen Netzwerk-Stack — die vollständigste Abschottung.
+#
+# Auf dem Jetson Nano unter JetPack 4.x scheitert das meist:
+#   „can't initialize iptables table 'raw': Table does not exist“
+# Vorher prüfen:  sudo modprobe iptable_raw
+#
+# Verwendung:
+#   docker compose -f docker-compose.bridge.yml up -d
+# oder über das Deploy-Skript:
+#   SPIELE_NETWORK=bridge ./deploy/deploy-jetson.sh benutzer@jetson.local
+#
+# Bewusst eine vollständige Datei statt eines Overrides: `ports` und
+# `network_mode` schließen sich aus, und wie ältere compose-Versionen
+# Listen zusammenführen, ist nicht verlässlich genug.
+#
+# ACHTUNG: Änderungen an docker-compose.yml hier mitziehen.
+
+name: spieleplattform
+
+services:
+  spiele:
+    image: spieleplattform:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spiele
+    restart: unless-stopped
+
+    ports:
+      # Port 8000 gehört dem ein anderer Dienst — die Spiele nehmen 8080.
+      - '8080:8080'
+
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+
+    user: '101:101'
+
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+    environment:
+      TZ: 'Europe/Berlin'
+
+    mem_limit: 128m
+    memswap_limit: 128m
+    pids_limit: 64
+
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/gesund']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: '5m'
+        max-file: '2'

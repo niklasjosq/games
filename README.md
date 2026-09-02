@@ -30,7 +30,15 @@ python3 -m http.server 8000
 Dann im Browser `http://localhost:8000` öffnen. Mehr braucht es nicht — kein
 `npm install`, kein Build, keine Abhängigkeiten.
 
-Für den Jetson Nano im Heimnetz: **[jetson/LIESMICH.md](jetson/LIESMICH.md)**
+Für den Jetson Nano im Heimnetz reicht ein Befehl:
+
+```bash
+./deploy/deploy-jetson.sh benutzer@jetson.local -i ~/.ssh/jetson
+```
+
+Danach läuft die Plattform dort auf **Port 8080** in einem eigenen, komplett
+abgeschotteten Container — neben dem ein anderer Dienst auf Port 8000, das davon nichts
+merkt. Alle Einzelheiten: **[deploy/LIESMICH.md](deploy/LIESMICH.md)**
 
 ## Was gibt es?
 
@@ -111,7 +119,9 @@ web/                        ← das liefert der Webserver aus
 └── schule/mathe/           aufgaben.js (Kern) + aufgaben-klasse3/5.js + mathe.js
 
 legacy/                     die alten Python-Spiele (nur Desktop)
-jetson/                     systemd-Dienst und Anleitung fürs Heimnetz
+deploy/                     Deploy-Skript und Anleitung für den Jetson Nano
+Dockerfile, nginx.conf      das Image: nur web/ und ein nginx
+docker-compose*.yml         Betrieb auf dem Jetson (host bzw. bridge)
 tests.sh                    alle Selbsttests (braucht nur node)
 rauchtest.sh                jede Seite in echtem Chrome laden
 ```
@@ -161,7 +171,8 @@ python legacy/nikolaus_spiel.py
 | Wofür | Was |
 |---|---|
 | Die Plattform benutzen | Ein Browser. Sonst nichts. |
-| Die Plattform ausliefern | Python 3 (für `python3 -m http.server`) |
+| Lokal ausprobieren | Python 3 (für `python3 -m http.server`) |
+| Auf den Jetson ausrollen | Docker auf dem Mac, Docker auf dem Jetson, SSH-Zugang |
 | Die Tests laufen lassen | `node` (ohne Pakete), für den Rauchtest zusätzlich Chrome |
 | Die alten Python-Spiele | Python 3 mit `pygame` und `ursina`, siehe `legacy/` |
 

@@ -1,0 +1,87 @@
+# Kinder-Plattform — Normalbetrieb auf dem Jetson Nano.
+#
+# ═══════════════════════════════════════════════════════════════════════
+# WICHTIG: Auf diesem Jetson läuft noch das ein anderer Dienst.
+# Beide Anwendungen müssen sich gegenseitig ignorieren können:
+#
+#   ein anderer Dienst          Port 8000   Container "anderer-dienst"    ~/anderer-dienst
+#   Kinder-Plattform  Port 8080   Container "spiele"      ~/spieleplattform
+#
+# Getrennt sind: Image, Container, Compose-Projekt (`name:` unten),
+# Verzeichnis auf dem Jetson und Port. Es gibt kein gemeinsames Netzwerk,
+# kein gemeinsames Volume und keine gemeinsame Datei. Ein `docker compose
+# down` in einem der beiden Verzeichnisse betrifft immer nur die eigene
+# Anwendung.
+# ═══════════════════════════════════════════════════════════════════════
+#
+# Zum Netzwerkmodus: `network_mode: host` wie beim ein anderer Dienst, aus dem
+# gleichen Grund — für ein Bridge-Netzwerk schreibt Docker iptables-Regeln
+# in die Tabelle "raw", die der 4.9er-Tegra-Kernel des Jetson nicht kennt
+# ("can't initialize iptables table 'raw'"). Wer einen Kernel mit
+# iptable_raw hat und die stärkere Netz-Isolation möchte, nimmt
+# docker-compose.bridge.yml.
+#
+# Die Abschottung dieses Containers kommt ohnehin nicht aus dem Netzwerk,
+# sondern daraus, dass er praktisch nichts kann: read-only, keine
+# Sonderrechte, keine Volumes, kein Zugriff auf Daten des Hosts.
+
+name: spieleplattform
+
+services:
+  spiele:
+    image: spieleplattform:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spiele
+    restart: unless-stopped
+
+    # Kein `ports:` — im host-Netzwerk lauscht nginx direkt auf Port 8080
+    # des Jetson. Erreichbar im Heimnetz, nicht von außen (die FRITZ!Box
+    # gibt nichts nach draußen frei).
+    network_mode: host
+
+    # ---- Abschottung -------------------------------------------------
+    # Die Seite ist statisch, es wird nichts gespeichert (alle Punkte und
+    # Noten liegen im Browser der Kinder). Deshalb kann der Container
+    # komplett schreibgeschützt laufen.
+    read_only: true
+    tmpfs:
+      # Hier legt nginx seine PID-Datei und Temp-Verzeichnisse ab.
+      # Im RAM, klein begrenzt, beim Neustart weg.
+      - /tmp:size=16m,mode=1777
+
+    # Läuft als nginx-Benutzer, nicht als root (steht auch im Dockerfile;
+    # hier noch einmal, damit es beim Lesen der Compose-Datei sichtbar ist).
+    user: '101:101'
+
+    cap_drop:
+      - ALL
+    security_opt:
+      # Kein setuid-Trick kann Rechte hinzugewinnen.
+      - no-new-privileges:true
+
+    # Keine Volumes. Der Container sieht vom Jetson nichts außer sich selbst.
+
+    environment:
+      TZ: 'Europe/Berlin'
+
+    # nginx mit einem Worker für statische Dateien braucht ~15 MB.
+    # Das knappe Limit ist Absicht: der Jetson hat 4 GB, davon darf das
+    # ein anderer Dienst bis 900 MB nehmen — die Spiele sollen nie im Weg stehen.
+    mem_limit: 128m
+    memswap_limit: 128m
+    pids_limit: 64
+
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/gesund']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: '5m'
+        max-file: '2'
