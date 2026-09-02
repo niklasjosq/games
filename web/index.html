@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creif — Spiele, Quiz und Schule</title>
+<link rel="stylesheet" href="shared/basis.css">
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<div id="sterne"></div>
+
+<main id="buehne">
+
+  <!-- ================= PROFIL AUSWÄHLEN ================= -->
+  <section id="profilwahl" class="bildschirm aktiv">
+    <h1 class="titel">👋 Wer spielt?</h1>
+    <p class="untertitel">Tippe auf dein Bild — dann gib deine PIN ein.</p>
+
+    <div class="karte">
+      <div id="profilListe" class="profilliste"></div>
+      <button id="knopfNeuesProfil" class="gross">➕ Neues Profil anlegen</button>
+    </div>
+
+    <p class="fusszeile">
+      <a href="#" id="linkGast">Ohne Profil weiter (Punkte werden nicht gespeichert)</a>
+      &nbsp;·&nbsp;
+      <a href="#" id="linkEltern">Für Eltern</a>
+    </p>
+  </section>
+
+  <!-- ================= NEUES PROFIL ================= -->
+  <section id="profilNeu" class="bildschirm">
+    <h1 class="titel">➕ Neues Profil</h1>
+
+    <div class="karte">
+      <h2>Wie heißt du?</h2>
+      <input id="neuName" type="text" maxlength="12" placeholder="Dein Name" autocomplete="off">
+
+      <h2>Welches Bild möchtest du?</h2>
+      <div id="avatarWahl" class="avatarwahl"></div>
+
+      <h2>Denk dir eine PIN aus (4 Ziffern)</h2>
+      <div class="pinreihe">
+        <input id="neuPin"  type="password" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+        <input id="neuPin2" type="password" inputmode="numeric" maxlength="4" placeholder="nochmal" autocomplete="off">
+      </div>
+      <p class="hinweistext">Merke sie dir gut! Wenn du sie vergisst, hilft dir Papa über „Für Eltern“.</p>
+
+      <div id="neuMeldung" class="meldung"></div>
+
+      <div class="knopfreihe">
+        <button id="neuSpeichern" class="gross">Fertig 🎉</button>
+        <button id="neuAbbrechen" class="klein">Abbrechen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PIN EINGEBEN ================= -->
+  <section id="pinEingabe" class="bildschirm">
+    <h1 class="titel"><span id="pinAvatar">🦊</span> <span id="pinName">Name</span></h1>
+    <p class="untertitel">Gib deine PIN ein</p>
+
+    <div class="karte schmal">
+      <div id="pinPunkte" class="pinpunkte"></div>
+      <div id="pinMeldung" class="meldung"></div>
+
+      <div class="ziffernblock" id="ziffernblock"></div>
+
+      <button id="pinZurueck" class="klein">Zurück</button>
+    </div>
+  </section>
+
+  <!-- ================= FÜR ELTERN ================= -->
+  <section id="eltern" class="bildschirm">
+    <h1 class="titel">🔧 Für Eltern</h1>
+
+    <div class="karte">
+      <h2>Profile auf diesem Gerät</h2>
+      <div id="elternListe" class="elternliste"></div>
+      <p class="hinweistext">
+        Die PIN ist nur ein Riegel gegen versehentliches Verwechseln — sie liegt
+        unverschlüsselt im Browser und ist kein echter Schutz. Alle Punkte und
+        Lernfortschritte liegen ebenfalls nur in diesem Browser; es gibt keinen Server.
+      </p>
+      <button id="elternZurueck" class="klein">Zurück</button>
+    </div>
+  </section>
+
+  <!-- ================= HAUPTMENÜ MIT TABS ================= -->
+  <section id="hauptmenue" class="bildschirm">
+
+    <header class="kopfleiste">
+      <div class="wer">
+        <span id="werAvatar" class="weravatar">👤</span>
+        <span>
+          <b id="werName">Gast</b>
+          <small id="werZusatz">nicht angemeldet</small>
+        </span>
+      </div>
+      <button id="knopfWechseln" class="klein">Profil wechseln</button>
+    </header>
+
+    <nav class="tableiste" id="tableiste"></nav>
+
+    <div id="kacheln" class="kacheln"></div>
+
+    <p class="fusszeile" id="menueFuss"></p>
+  </section>
+
+</main>
+
+<script src="shared/speicher.js"></script>
+<script src="shared/profil.js"></script>
+<script src="shared/katalog.js"></script>
+<script src="shell.js"></script>
+</body>
+</html>

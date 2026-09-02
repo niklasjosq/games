@@ -1,0 +1,189 @@
+/* ============================================================
+   STARTSEITE — Profilwahl, PIN-Block, Tabs und Kacheln.
+   Das gemeinsame Aussehen steht in shared/basis.css.
+   ============================================================ */
+
+/* ---------------- Profile auswählen ---------------- */
+
+.profilliste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+.profilknopf {
+  flex: 0 0 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .08);
+  border: 2px solid transparent;
+  transition: transform .1s, background .15s, border-color .15s;
+}
+.profilknopf:hover {
+  background: rgba(255, 255, 255, .18);
+  border-color: #bfe0ff;
+  transform: translateY(-3px);
+}
+.profilavatar { font-size: 52px; line-height: 1; }
+.profilname { font-size: 18px; font-weight: 700; }
+
+/* ---------------- Bild aussuchen ---------------- */
+
+.avatarwahl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  gap: 8px;
+}
+.avatar {
+  aspect-ratio: 1;
+  font-size: 30px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .07);
+  border: 2px solid transparent;
+  transition: background .15s, transform .1s;
+}
+.avatar:hover { background: rgba(255, 255, 255, .18); transform: scale(1.08); }
+.avatar.aktiv {
+  background: linear-gradient(180deg, var(--blau), #1d63c8);
+  border-color: #bfe0ff;
+  box-shadow: 0 0 16px rgba(58, 160, 255, .6);
+}
+
+.pinreihe { display: flex; gap: 10px; }
+.pinreihe input { letter-spacing: 8px; font-size: 24px; }
+
+/* ---------------- PIN eingeben ---------------- */
+
+.pinpunkte { display: flex; gap: 14px; justify-content: center; margin: 10px 0 4px; }
+.pinpunkt {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--rand);
+  background: rgba(0, 0, 0, .3);
+  transition: background .12s, transform .12s;
+}
+.pinpunkt.gefuellt {
+  background: var(--blau);
+  border-color: #bfe0ff;
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(58, 160, 255, .8);
+}
+.pinpunkte.wackeln { animation: wackeln .4s; }
+@keyframes wackeln {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+.ziffernblock {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 8px 0 16px;
+}
+.ziffer {
+  min-height: 66px;
+  font-size: 26px;
+  font-weight: 700;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .1);
+  border: 2px solid var(--rand);
+  transition: background .12s, transform .08s;
+}
+.ziffer:hover { background: rgba(255, 255, 255, .22); }
+.ziffer:active { transform: translateY(3px); }
+.ziffer.ok  { background: linear-gradient(180deg, var(--gruen), #17a259); border-color: #8bf0bd; }
+.ziffer.weg { background: rgba(255, 84, 112, .22); border-color: rgba(255, 84, 112, .5); }
+
+/* ---------------- Für Eltern ---------------- */
+
+.elternliste { display: flex; flex-direction: column; gap: 10px; }
+.elternzeile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .06);
+}
+.elternknoepfe { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ---------------- Tabs ---------------- */
+
+.tableiste {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.tab {
+  flex: 1 1 140px;
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 18px 18px 6px 6px;
+  background: rgba(255, 255, 255, .07);
+  border: 2px solid transparent;
+  border-bottom: 3px solid rgba(120, 170, 255, .25);
+  transition: background .15s, transform .1s;
+}
+.tab:hover { background: rgba(255, 255, 255, .16); }
+.tab.aktiv {
+  background: linear-gradient(180deg, rgba(58, 160, 255, .35), rgba(29, 99, 200, .18));
+  border-color: #bfe0ff;
+  border-bottom-color: var(--blau);
+  box-shadow: 0 0 20px rgba(58, 160, 255, .3);
+}
+.tabsymbol { font-size: 26px; }
+
+/* ---------------- Kacheln ---------------- */
+
+.kacheln {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.kachel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px;
+  border-radius: 22px;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--karte);
+  border: 2px solid var(--rand);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+  transition: transform .12s, border-color .15s, box-shadow .15s;
+}
+.kachel:hover {
+  transform: translateY(-4px);
+  border-color: #bfe0ff;
+  box-shadow: 0 14px 40px rgba(58, 160, 255, .3);
+}
+.kachelsymbol { font-size: 46px; line-height: 1; }
+.kacheltitel { font-size: 22px; font-weight: 700; }
+.kacheltext { font-size: 16px; opacity: .8; line-height: 1.45; flex: 1; }
+.kachelinfo {
+  font-size: 15px;
+  color: var(--gelb);
+  padding-top: 8px;
+  border-top: 1px solid rgba(120, 170, 255, .2);
+}
+.kachelstart { font-size: 17px; font-weight: 700; color: var(--gruen); }

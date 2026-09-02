@@ -1,0 +1,232 @@
+/* ============================================================
+   BASIS — das gemeinsame Aussehen der ganzen Plattform.
+   Diese Datei binden alle Seiten ein (Startseite, Spiele, Schule).
+   Willst du überall die Farben ändern? Dann hier unter :root.
+   ============================================================ */
+
+:root {
+  --nacht:       #05061a;
+  --nacht-hell:  #1b2a6b;
+  --karte:       rgba(20, 30, 80, 0.78);
+  --rand:        rgba(120, 170, 255, 0.35);
+  --text:        #eaf0ff;
+  --text-leise:  #bcd4ff;
+  --blau:        #3aa0ff;
+  --gruen:       #2fd07a;
+  --rot:         #ff5470;
+  --gelb:        #ffd23f;
+  --lila:        #9b6bff;
+  --orange:      #ff9f43;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, "Segoe UI", Ubuntu, Cantarell, sans-serif;
+  background: radial-gradient(ellipse at 50% -10%, var(--nacht-hell) 0%, #0b1030 45%, var(--nacht) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 18px;
+  overflow-x: hidden;
+}
+
+/* --- Sterne im Hintergrund --- */
+#sterne {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(2px 2px at 12% 18%, #fff, transparent),
+    radial-gradient(2px 2px at 78% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 33% 62%, #cfe4ff, transparent),
+    radial-gradient(2px 2px at 62% 44%, #fff, transparent),
+    radial-gradient(1px 1px at 88% 71%, #cfe4ff, transparent),
+    radial-gradient(2px 2px at 45% 88%, #fff, transparent),
+    radial-gradient(1px 1px at 8% 76%, #fff, transparent),
+    radial-gradient(2px 2px at 95% 33%, #ffe9a8, transparent),
+    radial-gradient(1px 1px at 25% 40%, #fff, transparent),
+    radial-gradient(1px 1px at 55% 22%, #fff, transparent);
+  animation: funkeln 4s ease-in-out infinite alternate;
+}
+@keyframes funkeln { from { opacity: .55; } to { opacity: 1; } }
+
+#buehne {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 14px 40px;
+}
+#buehne.weit { max-width: 1100px; }
+
+/* --- Bildschirme: immer nur einer ist sichtbar --- */
+.bildschirm { display: none; }
+.bildschirm.aktiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: reinfliegen .35s ease-out;
+}
+@keyframes reinfliegen { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+.versteckt { display: none !important; }
+
+/* --- Überschriften --- */
+.titel {
+  font-size: clamp(28px, 5.5vw, 48px);
+  text-align: center;
+  text-shadow: 0 0 22px rgba(90, 160, 255, .8);
+  letter-spacing: 1px;
+}
+.untertitel { text-align: center; opacity: .85; font-size: 19px; }
+h2 { font-size: 20px; margin: 16px 0 8px; color: var(--text-leise); }
+h2:first-child { margin-top: 0; }
+
+/* --- Karten --- */
+.karte {
+  background: var(--karte);
+  border: 2px solid var(--rand);
+  border-radius: 22px;
+  padding: 22px;
+  width: 100%;
+  max-width: 620px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .45);
+}
+.karte.schmal { max-width: 420px; }
+.karte.breit  { max-width: 900px; }
+
+/* --- Knöpfe --- */
+button {
+  font-family: inherit;
+  font-size: 19px;
+  color: var(--text);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+button.gross {
+  width: 100%;
+  min-height: 62px;
+  margin-top: 18px;
+  border-radius: 18px;
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(180deg, var(--gruen), #17a259);
+  box-shadow: 0 6px 0 #0e7a41, 0 8px 24px rgba(47, 208, 122, .35);
+  transition: transform .08s, box-shadow .08s;
+}
+button.gross:hover { transform: translateY(-2px); }
+button.gross:active { transform: translateY(4px); box-shadow: 0 2px 0 #0e7a41; }
+button.gross.blau {
+  background: linear-gradient(180deg, var(--blau), #1d63c8);
+  box-shadow: 0 6px 0 #17509f, 0 8px 24px rgba(58, 160, 255, .35);
+}
+button.gross.blau:active { box-shadow: 0 2px 0 #17509f; }
+
+button.klein {
+  padding: 10px 18px;
+  border-radius: 14px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, .1);
+  border: 2px solid var(--rand);
+  transition: background .15s;
+}
+button.klein:hover { background: rgba(255, 255, 255, .2); }
+button.klein.gefahr { border-color: rgba(255, 84, 112, .55); color: #ffd7de; }
+button.klein.gefahr:hover { background: rgba(255, 84, 112, .25); }
+
+.knopfreihe { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+.knopfreihe .gross { margin-top: 0; flex: 1 1 200px; }
+
+/* --- Eingabefelder --- */
+input[type="text"], input[type="password"], input[type="number"] {
+  font-family: inherit;
+  font-size: 20px;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid var(--rand);
+  background: rgba(0, 0, 0, .3);
+  color: var(--text);
+  text-align: center;
+}
+input:focus { outline: none; border-color: var(--blau); box-shadow: 0 0 14px rgba(58, 160, 255, .5); }
+input::placeholder { color: rgba(234, 240, 255, .4); }
+
+/* --- Meldungen --- */
+.meldung { min-height: 26px; text-align: center; margin-top: 10px; font-weight: 600; }
+.meldung.richtig { color: var(--gruen); }
+.meldung.falsch  { color: var(--rot); }
+.meldung.tipp    { color: var(--gelb); }
+
+.hinweistext { font-size: 15px; opacity: .7; margin-top: 10px; line-height: 1.5; text-align: center; }
+
+.fusszeile { text-align: center; font-size: 15px; opacity: .65; margin-top: 6px; }
+.fusszeile a { color: var(--text-leise); }
+
+/* --- Kopfleiste (wer ist angemeldet) --- */
+.kopfleiste {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--karte);
+  border: 2px solid var(--rand);
+  border-radius: 18px;
+  padding: 12px 18px;
+}
+.wer { display: flex; align-items: center; gap: 12px; }
+.weravatar { font-size: 34px; }
+.wer small { display: block; font-size: 14px; opacity: .7; }
+
+/* --- Zurück-Leiste auf Unterseiten --- */
+.zurueck {
+  align-self: flex-start;
+  color: var(--text-leise);
+  text-decoration: none;
+  font-size: 16px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid var(--rand);
+}
+.zurueck:hover { background: rgba(255, 255, 255, .16); }
+
+/* --- Tabellen (Steuerung erklären) --- */
+.tastentabelle { width: 100%; border-collapse: collapse; font-size: 17px; }
+.tastentabelle td { padding: 8px 6px; border-bottom: 1px solid rgba(120, 170, 255, .18); }
+.tastentabelle td:first-child { width: 190px; }
+kbd {
+  display: inline-block;
+  min-width: 34px;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid var(--rand);
+  border-bottom-width: 3px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* --- Bestenlisten --- */
+ol.bestenliste { list-style: none; }
+ol.bestenliste li {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 4px;
+  border-bottom: 1px solid rgba(120, 170, 255, .18);
+}
+ol.bestenliste li.leer { opacity: .6; justify-content: center; border: none; }
+
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  .karte { padding: 18px 14px; }
+}
