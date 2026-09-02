@@ -10,6 +10,9 @@ cd "$(dirname "$0")"
 echo "▶ Geteilte Bausteine (Profile, Punkte, Speicher)"
 node web/shared/test/test-speicher.js | tail -3
 
+echo "▶ Startseite: Profile, PIN, Reiter und Kacheln"
+node web/test/test-shell.js | tail -3
+
 echo "▶ Nikolaus vs. Mutanten-Minions"
 node web/spiele/nikolaus/test/test-spiel.js | tail -3
 
