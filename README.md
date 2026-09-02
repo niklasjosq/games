@@ -37,9 +37,9 @@ Für den Jetson Nano im Heimnetz: **[jetson/LIESMICH.md](jetson/LIESMICH.md)**
 ### 🎮 Spiele
 
 **Nikolaus vs. Mutanten-Minions** — [`web/spiele/nikolaus/`](web/spiele/nikolaus/)
-Fünf Level: auf der Wiese durchhalten, über Kisten auf den Turm klettern, über
-Wasserlöcher springen, im Wettrennen Schokolade sammeln und zum Schluss den
-großen Turm hinaufklettern, während Minions von oben fallen.
+Fünf Level: auf der Wiese durchhalten, eine Treppe hochhüpfen, über Wasserlöcher
+springen, im Wettrennen Schokolade sammeln und zum Schluss den großen Turm
+hinaufklettern, während Minions von oben fallen.
 Steuerung: <kbd>←</kbd> <kbd>→</kbd> laufen, <kbd>↑</kbd> springen,
 <kbd>Leertaste</kbd> werfen, <kbd>N</kbd> klettern, <kbd>P</kbd> Pause.
 
