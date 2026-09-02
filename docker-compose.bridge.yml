@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
 
     ports:
-      # Port 8000 gehört dem ein anderer Dienst — die Spiele nehmen 8080.
+      # 8080, weil 80 root bräuchte und 8000 oft belegt ist.
       - '8080:8080'
 
     read_only: true

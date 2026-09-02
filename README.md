@@ -37,8 +37,8 @@ Für den Jetson Nano im Heimnetz reicht ein Befehl:
 ```
 
 Danach läuft die Plattform dort auf **Port 8080** in einem eigenen, komplett
-abgeschotteten Container — neben dem ein anderer Dienst auf Port 8000, das davon nichts
-merkt. Alle Einzelheiten: **[deploy/LIESMICH.md](deploy/LIESMICH.md)**
+abgeschotteten Container, der anderen Diensten auf dem Gerät nicht in die Quere
+kommt. Alle Einzelheiten: **[deploy/LIESMICH.md](deploy/LIESMICH.md)**
 
 ## Was gibt es?
 

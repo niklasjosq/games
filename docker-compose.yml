@@ -1,25 +1,26 @@
 # Kinder-Plattform — Normalbetrieb auf dem Jetson Nano.
 #
 # ═══════════════════════════════════════════════════════════════════════
-# WICHTIG: Auf diesem Jetson läuft noch das ein anderer Dienst.
-# Beide Anwendungen müssen sich gegenseitig ignorieren können:
+# GUTER NACHBAR: Auf dem Jetson können weitere Dienste laufen.
+# Deshalb hat diese Anwendung durchgängig eigene Namen —
 #
-#   ein anderer Dienst          Port 8000   Container "anderer-dienst"    ~/anderer-dienst
-#   Kinder-Plattform  Port 8080   Container "spiele"      ~/spieleplattform
+#   Image spieleplattform:latest · Container "spiele"
+#   Compose-Projekt "spieleplattform" (siehe `name:` unten)
+#   Verzeichnis ~/spieleplattform · Port 8080
 #
-# Getrennt sind: Image, Container, Compose-Projekt (`name:` unten),
-# Verzeichnis auf dem Jetson und Port. Es gibt kein gemeinsames Netzwerk,
-# kein gemeinsames Volume und keine gemeinsame Datei. Ein `docker compose
-# down` in einem der beiden Verzeichnisse betrifft immer nur die eigene
-# Anwendung.
+# — und teilt sich mit nichts anderem ein Netzwerk, ein Volume oder eine
+# Datei. Ein `docker compose down` in diesem Verzeichnis betrifft immer
+# nur diese Anwendung.
+#
+# Port 8080 statt 8000 oder 80: 80 bräuchte root, und 8000 ist auf
+# Bastelrechnern oft schon vergeben.
 # ═══════════════════════════════════════════════════════════════════════
 #
-# Zum Netzwerkmodus: `network_mode: host` wie beim ein anderer Dienst, aus dem
-# gleichen Grund — für ein Bridge-Netzwerk schreibt Docker iptables-Regeln
-# in die Tabelle "raw", die der 4.9er-Tegra-Kernel des Jetson nicht kennt
-# ("can't initialize iptables table 'raw'"). Wer einen Kernel mit
-# iptable_raw hat und die stärkere Netz-Isolation möchte, nimmt
-# docker-compose.bridge.yml.
+# Zum Netzwerkmodus: `network_mode: host`, weil Docker für ein
+# Bridge-Netzwerk iptables-Regeln in die Tabelle "raw" schreibt, die der
+# 4.9er-Tegra-Kernel des Jetson nicht kennt ("can't initialize iptables
+# table 'raw'"). Wer einen Kernel mit iptable_raw hat und die stärkere
+# Netz-Isolation möchte, nimmt docker-compose.bridge.yml.
 #
 # Die Abschottung dieses Containers kommt ohnehin nicht aus dem Netzwerk,
 # sondern daraus, dass er praktisch nichts kann: read-only, keine
@@ -37,7 +38,7 @@ services:
     restart: unless-stopped
 
     # Kein `ports:` — im host-Netzwerk lauscht nginx direkt auf Port 8080
-    # des Jetson. Erreichbar im Heimnetz, nicht von außen (die FRITZ!Box
+    # des Jetson. Erreichbar im Heimnetz, nicht von außen (der Router
     # gibt nichts nach draußen frei).
     network_mode: host
 
@@ -67,8 +68,8 @@ services:
       TZ: 'Europe/Berlin'
 
     # nginx mit einem Worker für statische Dateien braucht ~15 MB.
-    # Das knappe Limit ist Absicht: der Jetson hat 4 GB, davon darf das
-    # ein anderer Dienst bis 900 MB nehmen — die Spiele sollen nie im Weg stehen.
+    # Das knappe Limit ist Absicht: der Jetson hat 4 GB und teilt sie mit
+    # anderen Diensten — die Spiele sollen dort nie im Weg stehen.
     mem_limit: 128m
     memswap_limit: 128m
     pids_limit: 64

@@ -2,8 +2,8 @@
 #
 # Im Container liegt NUR die fertige Webseite und ein nginx. Kein Python,
 # kein node, kein Quellcode, keine Tests, kein Zugriff auf irgendwelche
-# Daten des Jetson. Damit kann dieser Container dem ein anderer Dienst, das auf dem
-# gleichen Gerät läuft, auch im Fehlerfall nichts anhaben.
+# Daten des Jetson. Damit kann dieser Container anderen Diensten auf dem
+# gleichen Gerät auch im Fehlerfall nichts anhaben.
 #
 # Gebaut wird auf dem Mac für linux/arm64 (siehe deploy/deploy-jetson.sh) —
 # auf Apple Silicon ist das die eigene Architektur und dauert Sekunden.

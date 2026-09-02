@@ -7,33 +7,37 @@
 # auf dem Jetson. Übertragen wird das fertige Image als Stream über SSH;
 # eine Registry wird nicht gebraucht, und nichts verlässt das Heimnetz.
 #
-# Aufbau und Bedienung sind absichtlich die gleichen wie bei ein anderer Dienst
-# (deploy/deploy-jetson.sh dort), damit man nicht zweimal umdenken muss.
-#
 #   ./deploy/deploy-jetson.sh benutzer@jetson.local -i ~/.ssh/jetson
 #   SPIELE_SSH_KEY=~/.ssh/jetson ./deploy/deploy-jetson.sh benutzer@jetson.local
 #
 # ═══════════════════════════════════════════════════════════════════════
-# DAS ANDERER DIENST BLEIBT UNBERÜHRT.
+# GUTER NACHBAR
 #
-# Getrennt sind Image, Container, Compose-Projekt, Verzeichnis und Port:
+# Auf dem Jetson können weitere Dienste laufen. Dieses Skript fasst
+# ausschließlich sein eigenes Verzeichnis und sein eigenes
+# Compose-Projekt an:
 #
-#   ein anderer Dienst          Port 8000   Container "anderer-dienst"   ~/anderer-dienst
-#   Kinder-Plattform  Port 8080   Container "spiele"     ~/spieleplattform
+#   Image      spieleplattform:latest
+#   Container  spiele
+#   Projekt    spieleplattform
+#   Verzeichnis ~/spieleplattform
+#   Port       8080
 #
-# Das Skript fasst nur sein eigenes Verzeichnis und sein eigenes
-# Compose-Projekt an. Es räumt nie Images auf (kein `docker prune` —
-# das würde dem ein anderer Dienst das Image wegnehmen), und es prüft vor und nach
-# dem Deploy, dass der ein anderer Dienst-Container unverändert weiterläuft.
+# Zusätzlich:
+#   * Es räumt nie Images auf (kein `docker prune` — das würde anderen
+#     Anwendungen auf dem Gerät ihre Images wegnehmen).
+#   * Es weigert sich, in ein Verzeichnis zu schreiben, in dem schon ein
+#     fremdes Compose-Projekt liegt.
+#   * Es merkt sich vor dem Deploy, welche Container laufen, und meldet
+#     hinterher, falls einer davon verschwunden ist.
 # ═══════════════════════════════════════════════════════════════════════
 #
 set -euo pipefail
 
 IMAGE="spieleplattform:latest"
 CONTAINER="spiele"
+PROJEKT="spieleplattform"
 PORT=8080
-FREMDE_APP="anderer-dienst"          # läuft auf dem gleichen Jetson, Port 8000
-FREMDER_PORT=8000
 
 # Vorgabe ist das Home des Zielbenutzers: dort braucht das Deploy kein root.
 # Einfache Anführungszeichen sind Absicht — sonst würde die lokale Shell das ~
@@ -63,8 +67,8 @@ Umgebungsvariablen:
                      iptables aus; die Bridge braucht die Tabelle "raw",
                      die dem Jetson-Kernel (JetPack 4.x) meist fehlt.
 
-Die Plattform läuft danach auf Port 8080. Port 8000 gehört dem ein anderer Dienst
-und wird nicht angetastet.
+Die Plattform läuft danach auf Port 8080. Andere Dienste auf dem Gerät
+werden nicht angetastet.
 
 Beispiel:
   ./deploy/deploy-jetson.sh benutzer@jetson.local -i ~/.ssh/jetson
@@ -180,27 +184,22 @@ case "$REMOTE_DIR" in
 esac
 info "Zielverzeichnis auf $TARGET: $REMOTE_DIR"
 
-# --- Schutz des ein anderer Dienst --------------------------------------------------
-# Niemals in das Verzeichnis der anderen Anwendung schreiben. Dort liegt
-# deren docker-compose.yml und die SQLite-Datenbank; ein Deploy dorthin
-# würde die Konfiguration überschreiben.
-case "$REMOTE_DIR" in
-  *"/$FREMDE_APP"|*"/$FREMDE_APP/"*)
-    die "SPIELE_REMOTE_DIR zeigt auf das Verzeichnis des $FREMDE_APP: $REMOTE_DIR
+# --- Guter Nachbar: fremdes Compose-Projekt schützen ----------------------
+# Liegt im Zielverzeichnis schon eine docker-compose.yml, die zu einem
+# ANDEREN Projekt gehört? Dann würde das Deploy sie überschreiben — und
+# damit womöglich die Konfiguration eines fremden Dienstes zerstören.
+FREMDES_PROJEKT="$(ssh_ "$TARGET" "
+  f='$REMOTE_DIR/docker-compose.yml'
+  if [ -f \"\$f\" ] && ! grep -q '^name: $PROJEKT' \"\$f\"; then
+    grep -m1 '^name:' \"\$f\" 2>/dev/null || echo 'unbekannt'
+  fi" 2>/dev/null | tr -d '\r')"
 
-Dort liegen dessen Konfiguration und Datenbank. Bitte ein eigenes
-Verzeichnis wählen, zum Beispiel die Vorgabe:
-  SPIELE_REMOTE_DIR='$DEFAULT_REMOTE_DIR'" ;;
-esac
+if [[ -n "$FREMDES_PROJEKT" ]]; then
+  die "In $REMOTE_DIR liegt schon ein fremdes Compose-Projekt ($FREMDES_PROJEKT).
 
-# Wie geht es dem ein anderer Dienst, BEVOR wir etwas anfassen? Am Ende vergleichen wir.
-FREMD_VORHER="$(ssh_ "$TARGET" "docker inspect -f '{{.State.Status}}' $FREMDE_APP 2>/dev/null || sudo -n docker inspect -f '{{.State.Status}}' $FREMDE_APP 2>/dev/null || echo nicht-vorhanden" 2>/dev/null | tr -d '\r')"
-if [[ "$FREMD_VORHER" == "running" ]]; then
-  info "$FREMDE_APP läuft auf Port $FREMDER_PORT — bleibt unangetastet."
-elif [[ "$FREMD_VORHER" == "nicht-vorhanden" ]]; then
-  info "Kein $FREMDE_APP-Container auf diesem Jetson gefunden."
-else
-  info "$FREMDE_APP-Container ist im Zustand '$FREMD_VORHER' — wird nicht angefasst."
+Ein Deploy dorthin würde dessen Konfiguration überschreiben. Bitte ein
+eigenes Verzeichnis wählen, zum Beispiel die Vorgabe:
+  SPIELE_REMOTE_DIR='$DEFAULT_REMOTE_DIR'"
 fi
 
 # --- Rechte auf dem Zielsystem --------------------------------------------
@@ -213,6 +212,8 @@ passwordless_sudo() { ssh_ "$TARGET" 'sudo -n true >/dev/null 2>&1'; }
 
 if ssh_ "$TARGET" 'docker ps >/dev/null 2>&1'; then
   SUDO=""
+  # (Der Schnappschuss der laufenden Container folgt weiter unten,
+  #  sobald klar ist, ob Docker sudo braucht.)
 else
   passwordless_sudo || die "Docker auf $TARGET erfordert sudo, und sudo verlangt ein Passwort.
 Nutzer dauerhaft berechtigen (einmalig, danach ab- und wieder anmelden):
@@ -224,6 +225,13 @@ fi
 COMPOSE_CMD="${SUDO:+$SUDO }$COMPOSE"
 DOCKER_CMD="${SUDO:+$SUDO }docker"
 COMPOSE_RUN="$COMPOSE_CMD${COMPOSE_FILE:+ $COMPOSE_FILE}"
+
+# Welche Container laufen JETZT (außer unserem eigenen)? Nach dem Deploy
+# vergleichen wir und melden, falls einer verschwunden ist.
+NACHBARN_VORHER="$(ssh_ "$TARGET" "$DOCKER_CMD ps --format '{{.Names}}' 2>/dev/null | grep -vx '$CONTAINER' | sort" 2>/dev/null | tr -d '\r')"
+if [[ -n "$NACHBARN_VORHER" ]]; then
+  info "Läuft daneben und bleibt unangetastet: $(echo "$NACHBARN_VORHER" | tr '\n' ' ')"
+fi
 
 if ssh_ "$TARGET" "mkdir -p '$REMOTE_DIR' >/dev/null 2>&1 && [ -w '$REMOTE_DIR' ]" 2>/dev/null; then
   SUDO_FS=""
@@ -299,14 +307,15 @@ for _ in $(seq 1 30); do
   sleep 2
 done
 
-# --- Nachkontrolle: läuft das ein anderer Dienst noch? ------------------------------
-FREMD_NACHHER="$(ssh_ "$TARGET" "docker inspect -f '{{.State.Status}}' $FREMDE_APP 2>/dev/null || sudo -n docker inspect -f '{{.State.Status}}' $FREMDE_APP 2>/dev/null || echo nicht-vorhanden" 2>/dev/null | tr -d '\r')"
-if [[ "$FREMD_VORHER" == "running" && "$FREMD_NACHHER" != "running" ]]; then
-  warn "ACHTUNG: $FREMDE_APP lief vorher und ist jetzt im Zustand '$FREMD_NACHHER'."
-  warn "Das sollte nicht passieren. Neu starten mit:"
-  warn "  $SSH_HINT 'cd ~/$FREMDE_APP && $COMPOSE_CMD up -d'"
-elif [[ "$FREMD_VORHER" == "running" ]]; then
-  ok "$FREMDE_APP läuft unverändert weiter (Port $FREMDER_PORT)"
+# --- Nachkontrolle: laufen die Nachbarn noch? -----------------------------
+NACHBARN_NACHHER="$(ssh_ "$TARGET" "$DOCKER_CMD ps --format '{{.Names}}' 2>/dev/null | grep -vx '$CONTAINER' | sort" 2>/dev/null | tr -d '\r')"
+VERSCHWUNDEN="$(comm -23 <(echo "$NACHBARN_VORHER") <(echo "$NACHBARN_NACHHER") 2>/dev/null | tr '\n' ' ' | xargs || true)"
+if [[ -n "$VERSCHWUNDEN" ]]; then
+  warn "ACHTUNG: Diese Container liefen vorher und laufen jetzt nicht mehr: $VERSCHWUNDEN"
+  warn "Das sollte nicht passieren — dieses Deploy fasst nur '$CONTAINER' an."
+  warn "Nachsehen mit:  $SSH_HINT '$DOCKER_CMD ps -a'"
+elif [[ -n "$NACHBARN_VORHER" ]]; then
+  ok "Alle anderen Container laufen unverändert weiter"
 fi
 
 if [[ "$GESUND" != "1" ]]; then

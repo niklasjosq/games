@@ -1,21 +1,21 @@
 # Auf dem Jetson Nano ausrollen
 
-Auf dem Jetson läuft schon das **ein anderer Dienst**. Die Kinder-Plattform kommt als
-zweiter, vollständig getrennter Container daneben — sie teilen sich nichts
-außer dem Gerät.
+Die Plattform läuft als eigener, vollständig abgeschotteter Container. Auf dem
+Gerät können daneben weitere Dienste laufen — die Plattform hat durchgängig
+eigene Namen und kommt ihnen nicht in die Quere:
 
-| | ein anderer Dienst | Kinder-Plattform |
-|---|---|---|
-| Port | 8000 | **8080** |
-| Container | `anderer-dienst` | `spiele` |
-| Image | `anderer-dienst:latest` | `spieleplattform:latest` |
-| Compose-Projekt | `anderer-dienst` | `spieleplattform` |
-| Verzeichnis | `~/anderer-dienst` | `~/spieleplattform` |
-| Daten | SQLite in `./data` | **keine** (alles im Browser der Kinder) |
+| | Kinder-Plattform |
+|---|---|
+| Port | 8080 |
+| Container | `spiele` |
+| Image | `spieleplattform:latest` |
+| Compose-Projekt | `spieleplattform` |
+| Verzeichnis | `~/spieleplattform` |
+| Daten | **keine** (alles im Browser der Kinder) |
 
 ## Ausrollen
 
-Genauso wie beim ein anderer Dienst — gebaut wird auf dem Mac, übertragen über SSH:
+Gebaut wird auf dem Mac, übertragen über SSH:
 
 ```bash
 ./deploy/deploy-jetson.sh benutzer@jetson.local -i ~/.ssh/jetson
@@ -39,18 +39,18 @@ SPIELE_NETWORK=bridge         ./deploy/deploy-jetson.sh benutzer@…  # siehe un
 ./deploy/deploy-jetson.sh --help
 ```
 
-## Warum das ein anderer Dienst dabei nichts merkt
+## Warum andere Dienste davon nichts merken
 
-Getrennt sind Image, Container, Compose-Projekt, Verzeichnis und Port. Ein
-`docker compose down` in einem der beiden Verzeichnisse betrifft immer nur die
-eigene Anwendung. Zusätzlich achtet das Deploy-Skript darauf:
+Image, Container, Compose-Projekt, Verzeichnis und Port gehören allein dieser
+Anwendung. Ein `docker compose down` in diesem Verzeichnis betrifft immer nur
+sie. Zusätzlich achtet das Deploy-Skript darauf:
 
-* Es **räumt keine Images auf**. Ein `docker prune` würde dem ein anderer Dienst sein
-  Image wegnehmen — deshalb kommt es im Skript nicht vor.
-* Es **verweigert den Start**, wenn `SPIELE_REMOTE_DIR` auf `~/anderer-dienst`
-  zeigt. Dort liegen dessen Konfiguration und Datenbank.
-* Es **prüft den ein anderer Dienst-Container vorher und nachher** und sagt es, wenn er
-  vorher lief und danach nicht mehr.
+* Es **räumt keine Images auf**. Ein `docker prune` würde anderen Anwendungen
+  auf dem Gerät ihre Images wegnehmen — deshalb kommt es im Skript nicht vor.
+* Es **verweigert den Start**, wenn im Zielverzeichnis schon ein fremdes
+  Compose-Projekt liegt, dessen Konfiguration es überschreiben würde.
+* Es **merkt sich vor dem Deploy, welche Container laufen**, und meldet
+  hinterher, falls einer davon verschwunden ist.
 * Es **warnt**, wenn auf Port 8080 schon etwas Fremdes lauscht.
 
 ## Wie abgeschottet der Container ist
@@ -67,7 +67,7 @@ Verzeichnis. Das macht ihn ungewöhnlich harmlos:
 | `cap_drop: ALL` | Keine Linux-Sonderrechte. |
 | `no-new-privileges` | Kein setuid-Trick kann Rechte hinzugewinnen. |
 | keine `volumes` | Der Container sieht vom Jetson nichts außer sich selbst. |
-| `mem_limit: 128m` | Kann dem ein anderer Dienst (bis 900 MB) nie den Speicher wegnehmen. Braucht im Betrieb ~3 MB. |
+| `mem_limit: 128m` | Kann anderen Diensten nie den Speicher wegnehmen. Braucht im Betrieb ~3 MB. |
 | `pids_limit: 64` | Keine Prozesslawine. |
 
 Im Image liegt nur `web/` und ein nginx: kein Python, kein node, kein
@@ -75,7 +75,7 @@ Quellcode, keine Tests.
 
 ### Zum Netzwerkmodus
 
-Vorgabe ist `network_mode: host`, aus dem gleichen Grund wie beim ein anderer Dienst: für
+Vorgabe ist `network_mode: host`, und zwar aus einem Kernel-Grund: für
 ein Bridge-Netzwerk schreibt Docker iptables-Regeln in die Tabelle `raw`, die
 der 4.9er-Tegra-Kernel des Jetson nicht kennt
 (`can't initialize iptables table 'raw'`).
@@ -119,7 +119,7 @@ cd ~/spieleplattform
 docker compose ps                       # läuft es?
 docker compose logs --tail 50 spiele    # was sagt nginx?
 docker compose restart spiele           # neu starten
-docker compose down                     # anhalten (ein anderer Dienst bleibt davon unberührt)
+docker compose down                     # anhalten (nur diese Anwendung)
 curl -sf http://127.0.0.1:8080/gesund   # antwortet die Seite?
 ```
 
