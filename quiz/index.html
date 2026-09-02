@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weltraum-Quiz — Rettet die ISS!</title>
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<div id="sterne"></div>
+
+<main id="buehne">
+
+  <!-- ================= STARTBILDSCHIRM ================= -->
+  <section id="start" class="bildschirm aktiv">
+    <h1 class="titel">🚀 Rettet die ISS! 🛰️</h1>
+    <p class="untertitel">Finde deinen Raumanzug — dann verteidige die Raumstation!</p>
+
+    <div class="karte">
+      <h2>Wie viele Astronauten?</h2>
+      <div class="wahlreihe" id="wahlSpieler">
+        <button class="wahl aktiv" data-wert="1">👩‍🚀 1 Spieler</button>
+        <button class="wahl" data-wert="2">👩‍🚀👨‍🚀 2 Spieler</button>
+      </div>
+
+      <h2>Wie schwer sollen die Rätsel sein?</h2>
+      <div class="wahlreihe" id="wahlStufe">
+        <button class="wahl" data-wert="leicht">😀 Leicht</button>
+        <button class="wahl aktiv" data-wert="mittel">😃 Mittel</button>
+        <button class="wahl" data-wert="schwer">🤓 Schwer</button>
+      </div>
+
+      <h2>Wie heißt ihr?</h2>
+      <div class="namen">
+        <input id="name1" type="text" maxlength="12" value="Astronaut 1">
+        <input id="name2" type="text" maxlength="12" value="Astronaut 2" class="versteckt">
+      </div>
+
+      <button id="knopfStart" class="gross">Los geht's! 🚀</button>
+    </div>
+
+    <div class="karte schmal">
+      <h2>🏆 Bestenliste</h2>
+      <ol id="bestenliste"><li class="leer">Noch keine Punkte — sei die oder der Erste!</li></ol>
+    </div>
+  </section>
+
+  <!-- ================= PHASE 1: RAUMANZUG ================= -->
+  <section id="anzug" class="bildschirm">
+    <div class="kopfzeile">
+      <span id="anzugSpieler">Astronaut 1</span>
+      <span class="mitte">🧳 Schatzsuche nach dem Raumanzug</span>
+      <span id="anzugPunkte">0 Punkte</span>
+    </div>
+
+    <div id="anzugLeiste" class="anzugleiste"></div>
+
+    <div class="hinweiskasten">
+      <div class="suche" id="anzugSuche">Gesucht: Raumanzug</div>
+      <div class="hinweis" id="anzugHinweis">…</div>
+      <div class="meldung" id="anzugMeldung"></div>
+    </div>
+
+    <div id="issKarte" class="isskarte"></div>
+
+    <button id="anzugWeiter" class="gross versteckt">Weiter zur Verteidigung 🛡️</button>
+  </section>
+
+  <!-- ================= PHASE 2: ISS VERTEIDIGEN ================= -->
+  <section id="kampf" class="bildschirm">
+    <div class="kopfzeile">
+      <span id="kampfSpieler">Astronaut 1</span>
+      <span id="kampfWelle">Welle 1 / 3</span>
+      <span id="kampfHerzen">❤️❤️❤️</span>
+      <span class="munition">🔋
+        <span class="balken"><span id="munitionBalken"></span></span>
+        <b id="munitionZahl">10</b>
+      </span>
+      <span id="kampfPunkte">0 Punkte</span>
+    </div>
+
+    <canvas id="leinwand" width="900" height="540"></canvas>
+
+    <p class="tastenhilfe">
+      <b>←</b> <b>→</b> fliegen &nbsp;·&nbsp; <b>Leertaste</b> schießen &nbsp;·&nbsp;
+      wenn der Akku leer ist, kommt ein Rätsel (Antwort klicken oder Taste <b>1</b>–<b>4</b>)
+    </p>
+  </section>
+
+  <!-- ================= ÜBERGANG / RUNDENENDE ================= -->
+  <section id="uebergang" class="bildschirm">
+    <h1 class="titel" id="uebergangTitel">Geschafft!</h1>
+    <div class="karte">
+      <p class="gross-text" id="uebergangText"></p>
+      <button id="uebergangKnopf" class="gross">Weiter</button>
+    </div>
+  </section>
+
+  <!-- ================= ERGEBNIS ================= -->
+  <section id="ergebnis" class="bildschirm">
+    <h1 class="titel">🏅 Ergebnis</h1>
+    <div class="karte">
+      <div id="ergebnisListe"></div>
+      <p class="gross-text" id="ergebnisSieger"></p>
+      <button id="knopfNochmal" class="gross">Nochmal spielen 🔁</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= RÄTSEL-FENSTER (für beide Phasen) ================= -->
+<div id="raetsel" class="overlay">
+  <div class="raetselkarte">
+    <div class="raetseltitel">🧠 Rätsel lösen!</div>
+    <div class="frage" id="raetselFrage"></div>
+    <div class="auswahl" id="raetselAuswahl"></div>
+    <div class="meldung" id="raetselMeldung"></div>
+  </div>
+</div>
+
+<script src="raetsel.js"></script>
+<script src="spiel.js"></script>
+</body>
+</html>

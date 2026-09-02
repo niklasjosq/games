@@ -1,0 +1,356 @@
+/* ============================================================
+   RETTET DIE ISS — das Aussehen (Farben, Größen, Knöpfe)
+   Tipp: Ändere die Farben unter --farbe... und schau, was passiert!
+   ============================================================ */
+
+:root {
+  --weltraum:      #05061a;
+  --weltraum-hell: #1b2a6b;
+  --karte:         rgba(20, 30, 80, 0.78);
+  --rand:          rgba(120, 170, 255, 0.35);
+  --text:          #eaf0ff;
+  --blau:          #3aa0ff;
+  --gruen:         #2fd07a;
+  --rot:           #ff5470;
+  --gelb:          #ffd23f;
+  --lila:          #9b6bff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, "Segoe UI", Ubuntu, Cantarell, sans-serif;
+  background: radial-gradient(ellipse at 50% -10%, var(--weltraum-hell) 0%, #0b1030 45%, var(--weltraum) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 18px;
+  overflow-x: hidden;
+}
+
+/* --- Sterne im Hintergrund --- */
+#sterne {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(2px 2px at 12% 18%,  #fff, transparent),
+    radial-gradient(2px 2px at 78% 12%,  #fff, transparent),
+    radial-gradient(1px 1px at 33% 62%,  #cfe4ff, transparent),
+    radial-gradient(2px 2px at 62% 44%,  #fff, transparent),
+    radial-gradient(1px 1px at 88% 71%,  #cfe4ff, transparent),
+    radial-gradient(2px 2px at 45% 88%,  #fff, transparent),
+    radial-gradient(1px 1px at 8%  76%,  #fff, transparent),
+    radial-gradient(2px 2px at 95% 33%,  #ffe9a8, transparent),
+    radial-gradient(1px 1px at 25% 40%,  #fff, transparent),
+    radial-gradient(1px 1px at 55% 22%,  #fff, transparent);
+  animation: funkeln 4s ease-in-out infinite alternate;
+}
+@keyframes funkeln { from { opacity: .55; } to { opacity: 1; } }
+
+#buehne {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 14px 40px;
+}
+
+/* --- Bildschirme: immer nur einer ist sichtbar --- */
+.bildschirm { display: none; }
+.bildschirm.aktiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: reinfliegen .35s ease-out;
+}
+@keyframes reinfliegen { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+
+.versteckt { display: none !important; }
+
+/* --- Überschriften --- */
+.titel {
+  font-size: clamp(30px, 6vw, 52px);
+  text-align: center;
+  text-shadow: 0 0 22px rgba(90, 160, 255, .8);
+  letter-spacing: 1px;
+}
+.untertitel { text-align: center; opacity: .85; font-size: 19px; }
+h2 { font-size: 20px; margin: 16px 0 8px; color: #bcd4ff; }
+h2:first-child { margin-top: 0; }
+
+/* --- Karten (die Kästen) --- */
+.karte {
+  background: var(--karte);
+  border: 2px solid var(--rand);
+  border-radius: 22px;
+  padding: 22px;
+  width: 100%;
+  max-width: 620px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .45);
+}
+.karte.schmal { max-width: 420px; }
+
+/* --- Knöpfe --- */
+button {
+  font-family: inherit;
+  font-size: 19px;
+  color: var(--text);
+  cursor: pointer;
+  border: none;
+}
+
+.wahlreihe { display: flex; gap: 10px; flex-wrap: wrap; }
+.wahl {
+  flex: 1 1 130px;
+  min-height: 60px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .08);
+  border: 2px solid transparent;
+  transition: transform .1s, background .15s;
+}
+.wahl:hover { background: rgba(255, 255, 255, .16); transform: translateY(-2px); }
+.wahl.aktiv {
+  background: linear-gradient(180deg, var(--blau), #1d63c8);
+  border-color: #bfe0ff;
+  box-shadow: 0 0 18px rgba(58, 160, 255, .6);
+}
+
+.gross {
+  margin-top: 20px;
+  width: 100%;
+  min-height: 68px;
+  font-size: 24px;
+  font-weight: 700;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffb52e, #f07d1a);
+  color: #2a1600;
+  box-shadow: 0 6px 0 #a8530a, 0 10px 26px rgba(255, 150, 40, .35);
+  transition: transform .08s;
+}
+.gross:hover { transform: translateY(-2px); }
+.gross:active { transform: translateY(4px); box-shadow: 0 2px 0 #a8530a; }
+
+.namen { display: flex; gap: 10px; flex-wrap: wrap; }
+input[type="text"] {
+  flex: 1 1 180px;
+  min-height: 56px;
+  padding: 0 16px;
+  font-family: inherit;
+  font-size: 19px;
+  color: var(--text);
+  background: rgba(0, 0, 0, .35);
+  border: 2px solid var(--rand);
+  border-radius: 14px;
+}
+input[type="text"]:focus { outline: none; border-color: var(--blau); }
+
+/* --- Bestenliste --- */
+#bestenliste { list-style: none; }
+#bestenliste li {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 4px;
+  border-bottom: 1px dashed rgba(255, 255, 255, .15);
+}
+#bestenliste li.leer { justify-content: center; opacity: .6; border: none; }
+
+/* --- Kopfzeile im Spiel --- */
+.kopfzeile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  padding: 12px 16px;
+  background: rgba(10, 16, 48, .8);
+  border: 2px solid var(--rand);
+  border-radius: 16px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.kopfzeile .mitte { opacity: .8; font-weight: 400; }
+.munition { display: flex; align-items: center; gap: 7px; }
+.balken {
+  display: inline-block;
+  width: 90px;
+  height: 14px;
+  background: rgba(0, 0, 0, .5);
+  border: 1px solid var(--rand);
+  border-radius: 8px;
+  overflow: hidden;
+}
+#munitionBalken {
+  display: block;
+  height: 100%;
+  width: 66%;
+  background: linear-gradient(90deg, var(--gruen), var(--gelb));
+  transition: width .2s;
+}
+
+/* --- Raumanzug-Leiste --- */
+.anzugleiste { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.teil {
+  width: 96px;
+  padding: 12px 6px;
+  text-align: center;
+  font-size: 13px;
+  border-radius: 16px;
+  border: 2px dashed rgba(255, 255, 255, .25);
+  background: rgba(255, 255, 255, .05);
+  opacity: .45;
+}
+.teil .emoji { display: block; font-size: 34px; filter: grayscale(1); }
+.teil.gefunden {
+  opacity: 1;
+  border: 2px solid var(--gruen);
+  background: rgba(47, 208, 122, .18);
+  box-shadow: 0 0 16px rgba(47, 208, 122, .45);
+}
+.teil.gefunden .emoji { filter: none; animation: hopser .5s ease-out; }
+@keyframes hopser { 0% { transform: scale(.4); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+/* --- Hinweiskasten --- */
+.hinweiskasten {
+  width: 100%;
+  max-width: 760px;
+  text-align: center;
+  background: rgba(155, 107, 255, .16);
+  border: 2px solid rgba(155, 107, 255, .5);
+  border-radius: 18px;
+  padding: 16px;
+}
+.suche { font-size: 16px; opacity: .8; }
+.hinweis { font-size: 23px; font-weight: 700; margin-top: 6px; color: #ffe6a3; }
+.meldung { min-height: 26px; margin-top: 8px; font-weight: 700; }
+.meldung.richtig { color: var(--gruen); }
+.meldung.falsch { color: var(--gelb); }
+
+/* --- ISS-Karte mit den Modulen --- */
+.isskarte {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 760px;
+}
+.modul {
+  min-height: 120px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(60, 90, 190, .5), rgba(20, 30, 80, .8));
+  border: 2px solid var(--rand);
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform .1s, box-shadow .15s;
+}
+.modul:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 0 22px rgba(58, 160, 255, .6); }
+.modul .emoji { display: block; font-size: 44px; margin-bottom: 6px; }
+.modul.leer { opacity: .45; }
+
+/* --- Canvas --- */
+#leinwand {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  border-radius: 20px;
+  border: 2px solid var(--rand);
+  background: #070b28;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .6);
+}
+.tastenhilfe { text-align: center; opacity: .8; font-size: 16px; }
+.tastenhilfe b {
+  display: inline-block;
+  padding: 2px 9px;
+  background: rgba(255, 255, 255, .12);
+  border: 1px solid var(--rand);
+  border-radius: 7px;
+}
+
+/* --- Rätsel-Fenster --- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(3, 5, 20, .82);
+  backdrop-filter: blur(3px);
+}
+.overlay.aktiv { display: flex; animation: reinfliegen .25s ease-out; }
+.raetselkarte {
+  width: 100%;
+  max-width: 640px;
+  background: linear-gradient(180deg, #1a2668, #0d1338);
+  border: 3px solid var(--blau);
+  border-radius: 26px;
+  padding: 26px;
+  box-shadow: 0 0 60px rgba(58, 160, 255, .5);
+  text-align: center;
+}
+.raetseltitel { font-size: 17px; letter-spacing: 2px; opacity: .75; }
+.frage {
+  font-size: clamp(24px, 4.5vw, 34px);
+  font-weight: 800;
+  margin: 16px 0 22px;
+  white-space: pre-line;
+  line-height: 1.35;
+}
+.auswahl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.antwort {
+  min-height: 72px;
+  font-size: 26px;
+  font-weight: 700;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .1);
+  border: 2px solid var(--rand);
+  transition: transform .08s, background .15s;
+}
+.antwort:hover:not(:disabled) { background: rgba(255, 255, 255, .2); transform: translateY(-2px); }
+.antwort .nummer {
+  display: inline-block;
+  min-width: 26px;
+  margin-right: 8px;
+  font-size: 15px;
+  opacity: .6;
+}
+.antwort.richtig {
+  background: var(--gruen);
+  border-color: #d6ffe8;
+  color: #04321b;
+  animation: hopser .4s;
+}
+.antwort.falsch { background: var(--rot); border-color: #ffd6dd; }
+.antwort:disabled { cursor: default; }
+
+/* --- Ergebnis --- */
+.gross-text { font-size: 24px; text-align: center; margin: 14px 0; line-height: 1.4; }
+.ergebniszeile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 22px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .07);
+  border: 2px solid transparent;
+}
+.ergebniszeile.sieger {
+  border-color: var(--gelb);
+  background: rgba(255, 210, 63, .18);
+  box-shadow: 0 0 20px rgba(255, 210, 63, .4);
+}
+
+/* --- Kleine Bildschirme (Laptop schmal / Handy) --- */
+@media (max-width: 620px) {
+  body { font-size: 17px; }
+  .isskarte { grid-template-columns: repeat(2, 1fr); }
+  .auswahl { grid-template-columns: 1fr; }
+  .kopfzeile { font-size: 15px; gap: 8px 12px; }
+}
