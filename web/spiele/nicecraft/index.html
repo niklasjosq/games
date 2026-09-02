@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NiceCraft</title>
+<link rel="stylesheet" href="../../shared/basis.css">
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<!-- Die 3D-Welt füllt den ganzen Bildschirm -->
+<div id="welt"></div>
+
+<!-- Fadenkreuz in der Mitte -->
+<div id="kreuz"></div>
+
+<!-- Anzeige oben links -->
+<div id="anzeige"></div>
+
+<!-- Klotz-Auswahl unten -->
+<div id="auswahl"></div>
+
+<!-- ================= LANDING-PAGE (liegt über der Welt) ================= -->
+<div id="start" class="startkasten">
+  <div class="karte">
+    <a class="zurueck" href="../../index.html">← Zurück zur Übersicht</a>
+
+    <h1 class="titel">⛏️ NiceCraft</h1>
+    <p class="untertitel">Eine eigene Welt zum Herumlaufen und Bauen.</p>
+
+    <h2>Was kann man hier machen?</h2>
+    <p class="fliesstext">
+      Du landest in einer grünen Welt mit einer Mauer, einer Treppe, einem
+      Sandhügel und einem Baum. Von dort aus baust du weiter: Klötze abbauen,
+      Klötze hinsetzen, Türme bauen, Höhlen graben — ganz wie du willst.
+    </p>
+
+    <h2>Steuerung</h2>
+    <table class="tastentabelle">
+      <tr><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td><td>laufen (auch mit den Pfeiltasten)</td></tr>
+      <tr><td>Maus bewegen</td><td>umschauen</td></tr>
+      <tr><td><kbd>Leertaste</kbd></td><td>springen</td></tr>
+      <tr><td>Linke Maustaste</td><td>Klotz abbauen</td></tr>
+      <tr><td>Rechte Maustaste</td><td>Klotz hinsetzen</td></tr>
+      <tr><td><kbd>1</kbd> – <kbd>8</kbd></td><td>Klotz-Sorte wählen (oder unten anklicken)</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Maus freigeben und hierher zurück</td></tr>
+    </table>
+
+    <p class="hinweistext">
+      Am besten geht das mit einer echten Maus. Auf dem Tablet ohne Maus
+      kannst du dich zwar umschauen, aber nicht gut bauen.
+    </p>
+
+    <button class="gross">Welt betreten 🌍</button>
+  </div>
+</div>
+
+<script type="module" src="welt.js"></script>
+</body>
+</html>
