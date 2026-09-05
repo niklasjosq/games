@@ -124,7 +124,7 @@ function frischeWelt() {
   umgebung.window.scrollTo = () => {};
 
   const kontext = vm.createContext(umgebung);
-  for (const datei of [GETEILT + 'speicher.js', GETEILT + 'profil.js',
+  for (const datei of [GETEILT + 'speicher.js', GETEILT + 'profil.js', GETEILT + 'schule.js',
                        ORDNER + 'aufgaben.js', ORDNER + 'aufgaben-klasse3.js',
                        ORDNER + 'aufgaben-klasse5.js', ORDNER + 'mathe.js']) {
     vm.runInContext(fs.readFileSync(datei, 'utf8'), kontext, { filename: path.basename(datei) });
@@ -210,7 +210,7 @@ console.log('\n=== TEST: Üben ===');
   pruefe(w.el.uebungTipp.textContent.indexOf('💡') === 0, 'der Tipp hat ein Glühbirnen-Symbol');
 
   // Der Fortschritt ist im Profil gelandet
-  const f = w.lauf('holeSchulFortschritt("klasse3", "einmaleins")');
+  const f = w.lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins")');
   gleich(f.training.gesamt, 4, 'vier geübte Aufgaben sind gespeichert');
   gleich(f.training.richtig, 3, 'davon drei richtig');
   gleich(f.training.besteSerie, 3, 'die beste Serie war 3');
@@ -246,7 +246,7 @@ console.log('\n=== TEST: Test schreiben (alles richtig) ===');
            (li) => li.classList.contains('war-richtig')),
          'alle sind als richtig markiert');
 
-  const f = w.lauf('holeSchulFortschritt("klasse3", "plus-minus")');
+  const f = w.lauf('holeSchulFortschritt("mathe", "klasse3", "plus-minus")');
   gleich(f.besteNote, 1, 'die Note 1 steht im Profil');
   gleich(f.tests.length, 1, 'ein Test im Verlauf');
   gleich(f.tests[0].richtig, 10, 'mit 10 richtigen');
@@ -307,7 +307,7 @@ console.log('\n=== TEST: Zeit abgelaufen ===');
   pruefe(w.el.ergebnisZusatz.textContent.indexOf('Zeit war um') !== -1,
          'es steht dabei, dass die Zeit um war');
 
-  const f = w.lauf('holeSchulFortschritt("klasse3", "einmaleins")');
+  const f = w.lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins")');
   gleich(f.tests[0].richtig, 3, 'das Ergebnis ist gespeichert');
 }
 
@@ -326,7 +326,7 @@ console.log('\n=== TEST: Als Gast ===');
   gleich(w.el.ergebnisNote.textContent, 1, 'auch als Gast gibt es eine Note');
   pruefe(w.el.ergebnisZusatz.textContent.indexOf('nicht gespeichert') !== -1,
          'es wird erklärt, dass nichts gespeichert wird');
-  gleich(w.lauf('holeSchulFortschritt("klasse3", "sachaufgaben").tests.length'), 0,
+  gleich(w.lauf('holeSchulFortschritt("mathe", "klasse3", "sachaufgaben").tests.length'), 0,
          'im Speicher steht wirklich nichts');
 }
 

@@ -144,40 +144,115 @@ console.log('\n=== TEST: Schul-Fortschritt ===');
   const emma = lauf('neuesProfil("Emma", "🦊", "1234")');
   lauf(`meldeAn("${emma.profil.id}", "1234")`);
 
-  gleich(lauf('holeSchulFortschritt("klasse3", "einmaleins").training.gesamt'), 0,
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").training.gesamt'), 0,
          'ohne Übung ist der Fortschritt leer');
 
-  lauf('speichereTraining("klasse3", "einmaleins", true, 1)');
-  lauf('speichereTraining("klasse3", "einmaleins", true, 2)');
-  lauf('speichereTraining("klasse3", "einmaleins", false, 0)');
-  const t = lauf('holeSchulFortschritt("klasse3", "einmaleins").training');
+  lauf('speichereTraining("mathe", "klasse3", "einmaleins", true, 1)');
+  lauf('speichereTraining("mathe", "klasse3", "einmaleins", true, 2)');
+  lauf('speichereTraining("mathe", "klasse3", "einmaleins", false, 0)');
+  const t = lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").training');
   gleich(t.gesamt, 3, 'drei Aufgaben geübt');
   gleich(t.richtig, 2, 'davon zwei richtig');
   gleich(t.besteSerie, 2, 'beste Serie war 2');
 
-  lauf('speichereTest("klasse3", "einmaleins", {richtig: 8, gesamt: 10, note: 2, dauerSek: 95})');
-  gleich(lauf('holeSchulFortschritt("klasse3", "einmaleins").besteNote'), 2, 'beste Note ist 2');
+  lauf('speichereTest("mathe", "klasse3", "einmaleins", {richtig: 8, gesamt: 10, note: 2, dauerSek: 95})');
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").besteNote'), 2, 'beste Note ist 2');
 
-  lauf('speichereTest("klasse3", "einmaleins", {richtig: 5, gesamt: 10, note: 4, dauerSek: 200})');
-  gleich(lauf('holeSchulFortschritt("klasse3", "einmaleins").besteNote'), 2,
+  lauf('speichereTest("mathe", "klasse3", "einmaleins", {richtig: 5, gesamt: 10, note: 4, dauerSek: 200})');
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").besteNote'), 2,
          'schlechterer Test verschlechtert die beste Note nicht');
-  gleich(lauf('holeSchulFortschritt("klasse3", "einmaleins").tests.length'), 2, 'zwei Tests im Verlauf');
-  gleich(lauf('holeSchulFortschritt("klasse3", "einmaleins").tests[0].note'), 4,
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").tests.length'), 2, 'zwei Tests im Verlauf');
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").tests[0].note'), 4,
          'der neueste Test steht vorn');
 
-  lauf('speichereTest("klasse3", "einmaleins", {richtig: 10, gesamt: 10, note: 1, dauerSek: 60})');
-  gleich(lauf('holeSchulFortschritt("klasse3", "einmaleins").besteNote'), 1, 'Note 1 wird übernommen');
+  lauf('speichereTest("mathe", "klasse3", "einmaleins", {richtig: 10, gesamt: 10, note: 1, dauerSek: 60})');
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").besteNote'), 1, 'Note 1 wird übernommen');
 
   // Verlauf wird auf 10 begrenzt
   for (let i = 0; i < 12; i++) {
-    lauf('speichereTest("klasse5", "brueche", {richtig: 6, gesamt: 10, note: 3, dauerSek: 100})');
+    lauf('speichereTest("mathe", "klasse5", "brueche", {richtig: 6, gesamt: 10, note: 3, dauerSek: 100})');
   }
-  gleich(lauf('holeSchulFortschritt("klasse5", "brueche").tests.length'), 10,
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse5", "brueche").tests.length'), 10,
          'es werden nur die letzten 10 Tests behalten');
 
   // Andere Lektion bleibt unberührt
-  gleich(lauf('holeSchulFortschritt("klasse3", "plus-minus").tests.length'), 0,
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "plus-minus").tests.length'), 0,
          'eine andere Lektion ist noch leer');
+}
+
+/* ============================================================
+   TEST 3b: Die Fächer kommen sich nicht in die Quere
+   ============================================================ */
+console.log('\n=== TEST: Mathe und Englisch getrennt ===');
+{
+  const w = frischeWelt();
+  const lauf = (code) => vm.runInContext(code, w);
+
+  const emma = lauf('neuesProfil("Emma", "🦊", "1234")');
+  lauf(`meldeAn("${emma.profil.id}", "1234")`);
+
+  // Gleiche Klasse, gleicher Lektionsname — trotzdem zwei Töpfe
+  lauf('speichereTraining("mathe", "klasse5", "gleicher-name", true, 1)');
+  lauf('speichereTraining("englisch", "klasse5", "gleicher-name", true, 1)');
+  lauf('speichereTraining("englisch", "klasse5", "gleicher-name", true, 2)');
+  gleich(lauf('holeSchulFortschritt("mathe", "klasse5", "gleicher-name").training.gesamt'), 1,
+         'Mathe zählt nur seine eigene Übung');
+  gleich(lauf('holeSchulFortschritt("englisch", "klasse5", "gleicher-name").training.gesamt'), 2,
+         'Englisch zählt nur seine eigenen');
+
+  // Der Schlüssel enthält das Fach
+  pruefe(lauf(`localStorage.getItem('plattform.p.${emma.profil.id}.schule.englisch.klasse5.gleicher-name') !== null`),
+         'der Englisch-Schlüssel steht unter "schule.englisch"');
+
+  // Alte Mathe-Noten von früher müssen weiter lesbar sein
+  lauf(`localStorage.setItem('plattform.p.${emma.profil.id}.schule.klasse3-alt-test',
+        '{"training":{"gesamt":3,"richtig":2,"besteSerie":2},"tests":[],"besteNote":2}')`);
+  lauf(`localStorage.setItem('plattform.p.${emma.profil.id}.schule.mathe.klasse3.einmaleins',
+        '{"training":{"gesamt":30,"richtig":25,"besteSerie":7},"tests":[{"datum":"1.9.2026","richtig":9,"gesamt":10,"note":1,"dauerSek":80}],"besteNote":1}')`);
+  const alt = lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins")');
+  gleich(alt.besteNote, 1, 'eine vor dem Umbau gespeicherte Note wird noch gefunden');
+  gleich(alt.training.gesamt, 30, 'und der alte Übungsstand auch');
+}
+
+/* ============================================================
+   TEST 3c: Die Lernbox
+   ============================================================ */
+console.log('\n=== TEST: Lernbox ===');
+{
+  const w = frischeWelt();
+  const lauf = (code) => vm.runInContext(code, w);
+
+  // Als Gast: läuft, merkt sich aber nichts
+  gleich(lauf('holeLernbox("englisch", "klasse5", "tiere")'), { woerter: {} },
+         'ohne Profil ist die Lernbox leer');
+  gleich(lauf('speichereLernboxStand("englisch", "klasse5", "tiere", "dog", {stufe: 2, faellig: 5, richtig: 1, falsch: 0})'),
+         null, 'als Gast wird nichts gespeichert');
+  gleich(lauf('holeLernbox("englisch", "klasse5", "tiere").woerter'), {},
+         'und die Lernbox bleibt leer');
+
+  const emma = lauf('neuesProfil("Emma", "🦊", "1234")');
+  lauf(`meldeAn("${emma.profil.id}", "1234")`);
+
+  lauf('speichereLernboxStand("englisch", "klasse5", "tiere", "dog", {stufe: 2, faellig: 5, richtig: 1, falsch: 0})');
+  lauf('speichereLernboxStand("englisch", "klasse5", "tiere", "cat", {stufe: 1, faellig: 4, richtig: 0, falsch: 1})');
+  const kasten = lauf('holeLernbox("englisch", "klasse5", "tiere")');
+  gleich(kasten.woerter.dog, { stufe: 2, faellig: 5, richtig: 1, falsch: 0 }, 'dog liegt in Fach 2');
+  gleich(kasten.woerter.cat.stufe, 1, 'cat liegt in Fach 1');
+  gleich(Object.keys(kasten.woerter).length, 2, 'zwei Wörter in der Lernbox');
+
+  // Ein Wort weiterschieben überschreibt nur dieses Wort
+  lauf('speichereLernboxStand("englisch", "klasse5", "tiere", "cat", {stufe: 2, faellig: 6, richtig: 1, falsch: 1})');
+  gleich(lauf('holeLernbox("englisch", "klasse5", "tiere").woerter.cat.stufe'), 2, 'cat ist gewandert');
+  gleich(lauf('holeLernbox("englisch", "klasse5", "tiere").woerter.dog.stufe'), 2, 'dog blieb unberührt');
+
+  // Andere Lektion, anderes Fach: eigene Kästen
+  gleich(lauf('holeLernbox("englisch", "klasse5", "schule").woerter'), {},
+         'eine andere Lektion hat ihre eigene Lernbox');
+
+  // Profil löschen räumt die Lernbox mit weg
+  lauf(`loescheProfil("${emma.profil.id}")`);
+  gleich(lauf(`holeLernbox("englisch", "klasse5", "tiere", "${emma.profil.id}").woerter`), {},
+         'mit dem Profil verschwindet auch die Lernbox');
 }
 
 /* ============================================================
@@ -192,7 +267,7 @@ console.log('\n=== TEST: Profil löschen ===');
   const max  = lauf('neuesProfil("Max", "🐼", "5678")');
   lauf(`meldeAn("${emma.profil.id}", "1234")`);
   lauf('speichereErgebnis("nikolaus", 200)');
-  lauf('speichereTest("klasse3", "einmaleins", {richtig: 9, gesamt: 10, note: 1, dauerSek: 70})');
+  lauf('speichereTest("mathe", "klasse3", "einmaleins", {richtig: 9, gesamt: 10, note: 1, dauerSek: 70})');
 
   lauf(`meldeAn("${max.profil.id}", "5678")`);
   lauf('speichereErgebnis("nikolaus", 111)');
@@ -200,7 +275,7 @@ console.log('\n=== TEST: Profil löschen ===');
   lauf(`loescheProfil("${emma.profil.id}")`);
   gleich(lauf('ladeProfile().length'), 1, 'nur noch ein Profil da');
   gleich(lauf(`holeBestwert("nikolaus", "${emma.profil.id}")`), 0, 'Emmas Punkte sind weg');
-  gleich(lauf(`holeSchulFortschritt("klasse3", "einmaleins", "${emma.profil.id}").besteNote`), null,
+  gleich(lauf(`holeSchulFortschritt("mathe", "klasse3", "einmaleins", "${emma.profil.id}").besteNote`), null,
          'Emmas Noten sind weg');
   gleich(lauf(`holeBestwert("nikolaus", "${max.profil.id}")`), 111, 'Max behält seine Punkte');
   gleich(lauf('aktivesProfil().name'), 'Max', 'Max ist noch angemeldet');
@@ -238,7 +313,8 @@ console.log('\n=== TEST: Browser verbietet Speichern ===');
     gleich(lauf('aktivesProfil()'), null, 'niemand angemeldet');
     lauf('speichereErgebnis("nikolaus", 50)');
     gleich(lauf('holeBestwert("nikolaus")'), 0, 'Bestwert bleibt 0');
-    gleich(lauf('holeSchulFortschritt("klasse3", "einmaleins").tests'), [], 'Fortschritt ist leer');
+    gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").tests'), [], 'Fortschritt ist leer');
+    gleich(lauf('holeLernbox("englisch", "klasse5", "tiere").woerter'), {}, 'Lernbox ist leer');
     gleich(lauf('holeQuizBestenliste()'), [], 'Quiz-Bestenliste ist leer');
   } catch (e) {
     geknallt = true;

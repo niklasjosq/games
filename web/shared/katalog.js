@@ -53,6 +53,7 @@ const KATALOG = [
     beschreibung: 'Für 8-Jährige: Plus und Minus bis 1000, das kleine Einmaleins, Teilen mit Rest, Sachaufgaben, Geld, Zeit und Längen.',
     pfad: 'schule/mathe/index.html#klasse3',
     punkte: 'schule',
+    fach: 'mathe',
     klasse: 'klasse3'
   },
   {
@@ -63,6 +64,18 @@ const KATALOG = [
     beschreibung: 'Für 10-Jährige: große Zahlen, schriftliches Rechnen, Brüche, Dezimalzahlen, Einheiten umrechnen und Geometrie.',
     pfad: 'schule/mathe/index.html#klasse5',
     punkte: 'schule',
+    fach: 'mathe',
+    klasse: 'klasse5'
+  },
+  {
+    id: 'englisch-klasse5',
+    kategorie: 'schule',
+    symbol: '🇬🇧',
+    titel: 'Englisch — 5. Klasse',
+    beschreibung: 'Für 10-Jährige: über 400 Vokabeln zu den Themes von Camden Town — üben, Vokabeltest schreiben und mit der Lernbox wiederholen.',
+    pfad: 'schule/englisch/index.html#klasse5',
+    punkte: 'schule',
+    fach: 'englisch',
     klasse: 'klasse5'
   }
 ];
@@ -87,7 +100,7 @@ function kachelInfo(eintrag) {
   }
 
   if (eintrag.punkte === 'schule') {
-    const noten = besteNotenDerKlasse(eintrag.klasse);
+    const noten = besteNotenDerKlasse(eintrag.fach, eintrag.klasse);
     if (noten.length === 0) return 'Noch kein Test geschrieben';
     const schnitt = noten.reduce(function (a, b) { return a + b; }, 0) / noten.length;
     return '📝 ' + noten.length + ' Lektion' + (noten.length === 1 ? '' : 'en') +
@@ -98,14 +111,15 @@ function kachelInfo(eintrag) {
 }
 
 /* Beste Noten aller Lektionen einer Klassenstufe (für die Kachel).
-   Die Lektions-Namen kennt nur das Mathe-Modul — wir schauen deshalb
-   direkt im Speicher nach, was schon da ist. */
-function besteNotenDerKlasse(klasse) {
+   Die Lektions-Namen kennt nur das jeweilige Fach — wir schauen deshalb
+   direkt im Speicher nach, was schon da ist. Die Lernbox liegt unter
+   einem anderen Schlüssel und stört hier nicht. */
+function besteNotenDerKlasse(fach, klasse) {
   const profil = aktivesProfil();
   if (!profil) return [];
   const noten = [];
   try {
-    const anfang = PRAEFIX + 'p.' + profil.id + '.schule.mathe.' + klasse + '.';
+    const anfang = PRAEFIX + 'p.' + profil.id + '.schule.' + fach + '.' + klasse + '.';
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
       if (!k || k.indexOf(anfang) !== 0) continue;

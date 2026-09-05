@@ -124,8 +124,13 @@ function merkeInBestenliste(spielId, name, punkte, avatar) {
    FORTSCHRITT IN DER SCHULE
    ============================================================ */
 
-function schulSchluessel(profilId, klasse, lektion) {
-  return 'p.' + profilId + '.schule.mathe.' + klasse + '.' + lektion;
+/* Der Schlüssel enthält das Fach, damit Mathe und Englisch sich
+   nicht in die Quere kommen:
+     p.<profil>.schule.<fach>.<klasse>.<lektion>
+   Für 'mathe' kommt genau der alte Schlüssel heraus — alte
+   Noten bleiben also erhalten. */
+function schulSchluessel(profilId, fach, klasse, lektion) {
+  return 'p.' + profilId + '.schule.' + fach + '.' + klasse + '.' + lektion;
 }
 
 function leerFortschritt() {
@@ -136,13 +141,13 @@ function leerFortschritt() {
   };
 }
 
-function holeSchulFortschritt(klasse, lektion, profilId) {
+function holeSchulFortschritt(fach, klasse, lektion, profilId) {
   if (profilId === undefined) {
     const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
     if (!profil) return leerFortschritt();
     profilId = profil.id;
   }
-  const gespeichert = leseSpeicher(schulSchluessel(profilId, klasse, lektion), null);
+  const gespeichert = leseSpeicher(schulSchluessel(profilId, fach, klasse, lektion), null);
   if (!gespeichert) return leerFortschritt();
   // Fehlende Felder auffüllen, falls das Format mal wächst
   const f = leerFortschritt();
@@ -153,24 +158,24 @@ function holeSchulFortschritt(klasse, lektion, profilId) {
 }
 
 /* Nach jeder Trainingsaufgabe: war sie richtig, und wie lang ist die Serie? */
-function speichereTraining(klasse, lektion, warRichtig, serie) {
+function speichereTraining(fach, klasse, lektion, warRichtig, serie) {
   const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
   if (!profil) return null;
 
-  const f = holeSchulFortschritt(klasse, lektion, profil.id);
+  const f = holeSchulFortschritt(fach, klasse, lektion, profil.id);
   f.training.gesamt += 1;
   if (warRichtig) f.training.richtig += 1;
   if ((serie || 0) > f.training.besteSerie) f.training.besteSerie = serie;
-  schreibeSpeicher(schulSchluessel(profil.id, klasse, lektion), f);
+  schreibeSpeicher(schulSchluessel(profil.id, fach, klasse, lektion), f);
   return f;
 }
 
 /* Nach einem fertigen Test: {richtig, gesamt, note, dauerSek} */
-function speichereTest(klasse, lektion, ergebnis) {
+function speichereTest(fach, klasse, lektion, ergebnis) {
   const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
   if (!profil) return null;
 
-  const f = holeSchulFortschritt(klasse, lektion, profil.id);
+  const f = holeSchulFortschritt(fach, klasse, lektion, profil.id);
   f.tests.unshift({
     datum: heute(),
     richtig: ergebnis.richtig,
@@ -180,8 +185,51 @@ function speichereTest(klasse, lektion, ergebnis) {
   });
   f.tests = f.tests.slice(0, TEST_VERLAUF_LAENGE);
   if (f.besteNote === null || ergebnis.note < f.besteNote) f.besteNote = ergebnis.note;
-  schreibeSpeicher(schulSchluessel(profil.id, klasse, lektion), f);
+  schreibeSpeicher(schulSchluessel(profil.id, fach, klasse, lektion), f);
   return f;
+}
+
+/* ============================================================
+   DIE LERNBOX (Karteikasten, bisher nur Englisch)
+
+   Für jedes Wort merken wir uns, in welchem Fach es liegt und
+   wann es wieder dran ist. Das steht bewusst unter einem
+   EIGENEN Schlüssel — sonst würde die Notensuche auf der
+   Startseite darüber stolpern.
+     p.<profil>.schule.<fach>.lernbox.<klasse>.<lektion>
+   ============================================================ */
+
+function lernboxSchluessel(profilId, fach, klasse, lektion) {
+  return 'p.' + profilId + '.schule.' + fach + '.lernbox.' + klasse + '.' + lektion;
+}
+
+function leereLernbox() {
+  return { woerter: {} };
+}
+
+function holeLernbox(fach, klasse, lektion, profilId) {
+  if (profilId === undefined) {
+    const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
+    if (!profil) return leereLernbox();
+    profilId = profil.id;
+  }
+  const gespeichert = leseSpeicher(lernboxSchluessel(profilId, fach, klasse, lektion), null);
+  if (!gespeichert || typeof gespeichert.woerter !== 'object' || !gespeichert.woerter) {
+    return leereLernbox();
+  }
+  return { woerter: gespeichert.woerter };
+}
+
+/* Ein einzelnes Wort in der Lernbox weiterschieben.
+   stand = { stufe, faellig, richtig, falsch } */
+function speichereLernboxStand(fach, klasse, lektion, wortId, stand) {
+  const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
+  if (!profil) return null;
+
+  const kasten = holeLernbox(fach, klasse, lektion, profil.id);
+  kasten.woerter[wortId] = stand;
+  schreibeSpeicher(lernboxSchluessel(profil.id, fach, klasse, lektion), kasten);
+  return kasten;
 }
 
 /* ============================================================
