@@ -70,7 +70,7 @@ function zeichneUebersicht() {
   kasten.innerHTML = '';
 
   for (const l of alleLektionen(offeneKlasse)) {
-    const f = holeSchulFortschritt(offeneKlasse, l.id);
+    const f = holeSchulFortschritt('mathe', offeneKlasse, l.id);
     const karte = document.createElement('div');
     karte.className = 'lektion';
 
@@ -248,7 +248,7 @@ function pruefeUebung() {
     }
   }
 
-  speichereTraining(offeneKlasse, LAUF.lektion.id, stimmt, LAUF.serie);
+  speichereTraining('mathe', offeneKlasse, LAUF.lektion.id, stimmt, LAUF.serie);
   aktualisiereUebungsanzeige();
 
   // Felder sperren, bis es weitergeht
@@ -256,13 +256,6 @@ function pruefeUebung() {
   $('uebungWeiter').textContent = 'Nächste Aufgabe →';
   $('uebungWeiter').dataset.modus = 'weiter';
   $('uebungWeiter').focus();
-}
-
-function lobText(serie) {
-  if (serie >= 10) return '🏆 Unglaublich! ' + serie + ' richtige hintereinander!';
-  if (serie >= 5)  return '🔥 Super! ' + serie + ' richtige hintereinander!';
-  if (serie >= 3)  return '⭐ Sehr gut weiter so!';
-  return '✅ Richtig!';
 }
 
 /* Die Antwort so anzeigen, wie ein Kind sie lesen würde */
@@ -365,7 +358,7 @@ function beendeTest(zeitAbgelaufen) {
   const dauerSek = Math.round((Date.now() - LAUF.start) / 1000);
   const note = berechneNote(LAUF.richtig, LAUF.gesamt);
 
-  speichereTest(offeneKlasse, LAUF.lektion.id, {
+  speichereTest('mathe', offeneKlasse, LAUF.lektion.id, {
     richtig: LAUF.richtig,
     gesamt: LAUF.gesamt,
     note: note,
@@ -388,7 +381,7 @@ function zeigeErgebnis(note, dauerSek, zeitAbgelaufen) {
 
   const profil = aktivesProfil();
   if (profil) {
-    const f = holeSchulFortschritt(offeneKlasse, LAUF.lektion.id);
+    const f = holeSchulFortschritt('mathe', offeneKlasse, LAUF.lektion.id);
     if (f.besteNote === note && f.tests.length > 1) zusatz += ' · 🏅 Deine beste Note bisher!';
   } else {
     zusatz += ' · Als Gast wird das Ergebnis nicht gespeichert.';

@@ -5,6 +5,7 @@ const fs = require('fs');
 const vm = require('vm');
 const path = require('path');
 const ORDNER = path.join(__dirname, '..') + path.sep;
+const GETEILT = path.join(__dirname, '..', '..', '..', 'shared') + path.sep;
 
 let fehler = 0;
 function pruefe(bedingung, text) {
@@ -20,6 +21,7 @@ function gleich(ist, soll, text) {
 const umgebung = { console: console, Math: Math, JSON: JSON, Object: Object, Number: Number, String: String };
 umgebung.window = umgebung;
 const K = vm.createContext(umgebung);
+vm.runInContext(fs.readFileSync(GETEILT + 'schule.js', 'utf8'), K, { filename: 'schule.js' });
 for (const datei of ['aufgaben.js', 'aufgaben-klasse3.js', 'aufgaben-klasse5.js']) {
   vm.runInContext(fs.readFileSync(ORDNER + datei, 'utf8'), K, { filename: datei });
 }

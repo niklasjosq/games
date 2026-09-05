@@ -230,3 +230,11 @@ ol.bestenliste li.leer { opacity: .6; justify-content: center; border: none; }
   body { font-size: 17px; }
   .karte { padding: 18px 14px; }
 }
+
+/* --- Schulnoten: von grün (1) bis rot (6) --- */
+.note-1 { color: #2fd07a; }
+.note-2 { color: #8fd94a; }
+.note-3 { color: var(--gelb); }
+.note-4 { color: var(--orange); }
+.note-5 { color: #ff7a5c; }
+.note-6 { color: var(--rot); }
