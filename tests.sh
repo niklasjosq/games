@@ -4,34 +4,45 @@
 #   ./tests.sh
 #
 # Für einen Test im echten Browser gibt es zusätzlich ./rauchtest.sh
-set -e
+set -u
 cd "$(dirname "$0")"
 
-echo "▶ Geteilte Bausteine (Profile, Punkte, Speicher)"
-node web/shared/test/test-speicher.js | tail -3
+FEHLER=0
 
-echo "▶ Startseite: Profile, PIN, Reiter und Kacheln"
-node web/test/test-shell.js | tail -3
+# lauf <Überschrift> <Testdatei>
+#
+# Im guten Fall zeigen wir nur die letzten Zeilen — sonst scrollt die
+# Erfolgsmeldung weg. Geht etwas schief, kommt die GANZE Ausgabe, denn
+# dann will man ja sehen, welche Prüfung gestolpert ist.
+lauf() {
+  local ueberschrift="$1"
+  local datei="$2"
+  local ausgabe
+  echo "▶ $ueberschrift"
+  if ausgabe="$(node "$datei" 2>&1)"; then
+    echo "$ausgabe" | tail -3
+  else
+    echo "$ausgabe"
+    echo "  ⚠️  $datei ist fehlgeschlagen."
+    FEHLER=$((FEHLER + 1))
+  fi
+}
 
-echo "▶ Nikolaus vs. Mutanten-Minions"
-node web/spiele/nikolaus/test/test-spiel.js | tail -3
-
-echo "▶ Mathe: Aufgaben nachrechnen"
-node web/schule/mathe/test/test-aufgaben.js | tail -3
-
-echo "▶ Mathe: Üben und Test durchspielen"
-node web/schule/mathe/test/test-ablauf.js | tail -3
-
-echo "▶ Englisch: Vokabeln und Lernbox prüfen"
-node web/schule/englisch/test/test-vokabeln.js | tail -3
-
-echo "▶ Englisch: Üben, Test und Lernbox durchspielen"
-node web/schule/englisch/test/test-ablauf.js | tail -3
-
-echo "▶ Quiz: Rettet die ISS"
-node web/quiz/rettet-die-iss/test/test-spiel.js | tail -3
+lauf "Geteilte Bausteine (Profile, Punkte, Speicher)" web/shared/test/test-speicher.js
+lauf "Startseite: Profile, PIN, Reiter und Kacheln"   web/test/test-shell.js
+lauf "Nikolaus vs. Mutanten-Minions"                  web/spiele/nikolaus/test/test-spiel.js
+lauf "Mathe: Aufgaben nachrechnen"                    web/schule/mathe/test/test-aufgaben.js
+lauf "Mathe: Üben und Test durchspielen"              web/schule/mathe/test/test-ablauf.js
+lauf "Englisch: Vokabeln und Lernbox prüfen"          web/schule/englisch/test/test-vokabeln.js
+lauf "Englisch: Üben, Test und Lernbox durchspielen"  web/schule/englisch/test/test-ablauf.js
+lauf "Quiz: Rettet die ISS"                           web/quiz/rettet-die-iss/test/test-spiel.js
 
 echo ""
-echo "════════════════════════════════════════"
-echo "  🎉 ALLE TESTS BESTANDEN"
-echo "════════════════════════════════════════"
+if [ $FEHLER -eq 0 ]; then
+  echo "════════════════════════════════════════"
+  echo "  🎉 ALLE TESTS BESTANDEN"
+  echo "════════════════════════════════════════"
+else
+  echo "  💥 $FEHLER TESTDATEI(EN) FEHLGESCHLAGEN"
+  exit 1
+fi

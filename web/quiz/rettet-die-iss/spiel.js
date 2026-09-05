@@ -438,7 +438,13 @@ function schiessen() {
 }
 
 function herzVerlieren() {
+  // In einem Bild koennen zwei Gegner gleichzeitig die ISS erreichen.
+  // Ohne diese Bremse zoege der zweite Treffer die Herzen auf -1 und
+  // '❤️'.repeat(-1) wuerde das Spiel abstuerzen lassen.
+  if (K.vorbei) return;
+
   const s = aktuellerSpieler();
+  if (s.herzen <= 0) return;
   s.herzen--;
   K.beben = 14;
   piep(90, 0.45, 'sawtooth');
