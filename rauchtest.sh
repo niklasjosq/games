@@ -107,6 +107,13 @@ lade "$BASIS/schule/mathe/index.html#klasse5" "$ARBEIT/d5.html"
 pruefe "$ARBEIT/d5.html" 'Umfang und Fläche' 'der Link öffnet direkt die 5. Klasse'
 fehlerfrei "$ARBEIT/d5.html"
 
+echo "▶ Englisch (5. Klasse)"
+lade "$BASIS/schule/englisch/index.html#klasse5" "$ARBEIT/d7.html"
+pruefe "$ARBEIT/d7.html" 'At the corner shop' 'die Vokabel-Lektionen sind da'
+pruefe "$ARBEIT/d7.html" 'Deine Lernbox' 'die Lernbox-Karte wurde gebaut'
+pruefe "$ARBEIT/d7.html" 'Welcome to Camden Town' 'die Themes stehen als Überschriften da'
+fehlerfrei "$ARBEIT/d7.html"
+
 echo "▶ Quiz: Rettet die ISS"
 lade "$BASIS/quiz/rettet-die-iss/index.html" "$ARBEIT/d6.html"
 pruefe "$ARBEIT/d6.html" 'Rettet die ISS' 'das Quiz lädt'

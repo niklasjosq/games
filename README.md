@@ -87,6 +87,41 @@ Die Aufgaben werden jedes Mal neu gewürfelt, es gibt also keine Lösung zum
 Auswendiglernen. Bei den Eingaben sind wir großzügig: `3,5` und `3.5` gelten
 beide, `17:30` genauso wie `1730`.
 
+**Englisch** — [`web/schule/englisch/`](web/schule/englisch/)
+Über 400 Vokabeln für die 5. Klasse in 12 Lektionen, sortiert nach den *Themes*
+von **Camden Town** (Westermann, Ausgabe 2020 für Gymnasien). Drei Wege zu üben:
+
+* **Üben** — endlos, mit sofortiger Rückmeldung und Serienzähler. Drei Richtungen
+  zur Wahl: Englisch tippen, Deutsch tippen oder aus vier Möglichkeiten auswählen
+* **Test** — 10 Vokabeln, Uhr läuft, deutsch sehen und englisch schreiben wie in
+  der Schule, am Ende eine **Note von 1 bis 6**
+* **Lernbox** — der Karteikasten mit **fünf Fächern**: Was du kannst, wandert ein
+  Fach weiter und kommt später wieder dran (Fach 1 heute, dann morgen, nach 3
+  Tagen, nach einer Woche, nach zwei Wochen). Was du nicht wusstest, geht zurück
+  in Fach 1
+
+| Themes von Camden Town 5 | Lektionen |
+|---|---|
+| Welcome to Camden Town! | Begrüßung, Farben, Zahlen |
+| Theme 1 — New in Camden | Zuhause und Camden · Familie und Freunde |
+| Theme 2 — At school | Schulsachen und Classroom phrases · Schulfächer und Kantine |
+| Theme 3 — Hobbies and activities | Hobbys, Uhrzeit, Wochentage · Talentshow |
+| Theme 4 — Birthdays | Geburtstag, Monate, Jahreszeiten · Einkaufen und Kleidung |
+| Theme 5 — Pets and animals | Tiere und Körperteile · Im Tierheim |
+| Theme 6 — Holidays in Britain | Ferien in Großbritannien (freiwillig) |
+
+Bei den Eingaben zählt das Wort, nicht die Form: Groß- und Kleinschreibung ist
+egal, `colour` und `color` gelten beide, `run` genauso wie `to run`, `Küche`
+genauso wie `Kueche` und `die Küche`. Ein echter Tippfehler gilt aber nicht —
+im Vokabeltest muss man die Wörter schreiben können.
+
+Wenn das Gerät eine englische Stimme hat, gibt es einen 🔊-Knopf zum Anhören.
+Ohne Stimme ist er einfach nicht da; Tondateien braucht es keine.
+
+> Die Wortliste ist eine **eigene Auswahl** zu den Wortfeldern des Buchs, keine
+> Abschrift der Verlags-Vokabelliste. Einzelne Wörter aus dem Buch fehlen
+> deshalb, andere stehen zusätzlich drin.
+
 ## Profile
 
 Auf der Startseite legt sich jedes Kind ein Profil an: Name, ein Tierbild und
@@ -111,12 +146,15 @@ web/                        ← das liefert der Webserver aus
 ├── shared/                 von allen Seiten benutzt
 │   ├── basis.css           gemeinsames Aussehen
 │   ├── profil.js           Profile anlegen, PIN prüfen, anmelden
-│   ├── speicher.js         Punkte, Bestenlisten, Lernfortschritt
-│   └── katalog.js          alle Kacheln an einer Stelle
+│   ├── speicher.js         Punkte, Bestenlisten, Lernfortschritt, Lernbox
+│   ├── katalog.js          alle Kacheln an einer Stelle
+│   ├── schule.js           was alle Fächer teilen: Zufall, Noten, Lob
+│   └── schule.css          wie Lektionen, Aufgaben und Ergebnis aussehen
 ├── spiele/nikolaus/        level.js (die Level) + spiel.js (Ablauf) + seite.js (Seite)
 ├── spiele/nicecraft/       welt.js + lib/ (three.js, mitgeliefert)
 ├── quiz/rettet-die-iss/    unverändert übernommen
-└── schule/mathe/           aufgaben.js (Kern) + aufgaben-klasse3/5.js + mathe.js
+├── schule/mathe/           aufgaben.js (Kern) + aufgaben-klasse3/5.js + mathe.js
+└── schule/englisch/        vokabeln.js (Kern) + vokabeln-klasse5.js + englisch.js
 
 legacy/                     die alten Python-Spiele (nur Desktop)
 deploy/                     Deploy-Skript und Anleitung für den Jetson Nano
@@ -135,6 +173,12 @@ erscheint es als Kachel. Punkte speichern mit
 Funktion in die passende Liste schreiben, die `{frage, antwort, eingabe, hilfe}`
 zurückgibt. `./tests.sh` rechnet sie dann 500-mal nach.
 
+**Eine neue Vokabel?** In [`vokabeln-klasse5.js`](web/schule/englisch/vokabeln-klasse5.js)
+`{ englisch: 'dog', deutsch: 'der Hund' }` in die passende Lektion schreiben.
+Mehrere gültige Formen gehen als Liste: `englisch: ['colour', 'color']`.
+`./tests.sh` prüft dann, dass es das Wort nicht schon gibt und dass es seine
+eigene Antwort akzeptiert.
+
 ## Tests
 
 ```bash
@@ -144,13 +188,16 @@ zurückgibt. `./tests.sh` rechnet sie dann 500-mal nach.
 
 `tests.sh` prüft unter anderem: Profile und PINs, Punktespeicherung, alle fünf
 Nikolaus-Level (inklusive Turmklettern bis zum Sieg), **500 gewürfelte Aufgaben
-pro Mathe-Lektion** samt Nachrechnen der eigenen Lösung, den kompletten Ablauf
-von Übung und Test mit Notengebung, und eine ganze Quiz-Runde mit zwei Spielern.
+pro Mathe-Lektion** samt Nachrechnen der eigenen Lösung, **alle Englisch-Vokabeln**
+auf Dubletten und darauf, dass jede ihre eigene Antwort akzeptiert, das Wandern
+der Wörter durch die fünf Lernbox-Fächer, den kompletten Ablauf von Übung und
+Test mit Notengebung, und eine ganze Quiz-Runde mit zwei Spielern.
 
 In der Browser-Konsole geht außerdem:
 
 ```js
 testeAufgaben(200)   // auf der Mathe-Seite: würfelt Aufgaben und rechnet nach
+testeVokabeln()      // auf der Englisch-Seite: prüft alle Vokabeln
 testeRaetsel(900)    // im Quiz: prüft die Quiz-Rätsel
 ```
 

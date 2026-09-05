@@ -255,9 +255,12 @@ console.log('\n=== TEST: Reiter und Kacheln ===');
 
   // Schule-Reiter
   w.el.tableiste.children[2].onclick();
-  gleich(w.el.kacheln.children.length, 2, 'im Reiter Schule stehen 2 Kacheln');
-  pruefe(w.el.kacheln.children[0].innerHTML.indexOf('3. Klasse') !== -1, '3. Klasse ist dabei');
-  pruefe(w.el.kacheln.children[1].innerHTML.indexOf('5. Klasse') !== -1, '5. Klasse ist dabei');
+  gleich(w.el.kacheln.children.length, 3, 'im Reiter Schule stehen 3 Kacheln');
+  pruefe(w.el.kacheln.children[0].innerHTML.indexOf('3. Klasse') !== -1, 'Mathe 3. Klasse ist dabei');
+  pruefe(w.el.kacheln.children[1].innerHTML.indexOf('5. Klasse') !== -1, 'Mathe 5. Klasse ist dabei');
+  pruefe(w.el.kacheln.children[2].innerHTML.indexOf('Englisch') !== -1, 'Englisch ist dabei');
+  pruefe(w.el.kacheln.children[2].href.indexOf('schule/englisch') !== -1,
+         'die Englisch-Kachel verlinkt auf den Vokabeltrainer');
   pruefe(w.el.kacheln.children[0].href.indexOf('#klasse3') !== -1,
          'die Kachel springt direkt in die 3. Klasse');
   pruefe(w.el.kacheln.children[0].innerHTML.indexOf('kein Test') !== -1,
@@ -281,8 +284,8 @@ console.log('\n=== TEST: Kacheln zeigen den Stand ===');
 
   // Ein Spiel und ein Test wie im echten Leben
   w.lauf('speichereErgebnis("nikolaus", 340)');
-  w.lauf('speichereTest("klasse3", "einmaleins", {richtig: 9, gesamt: 10, note: 1, dauerSek: 80})');
-  w.lauf('speichereTest("klasse3", "plus-minus", {richtig: 7, gesamt: 10, note: 3, dauerSek: 150})');
+  w.lauf('speichereTest("mathe", "klasse3", "einmaleins", {richtig: 9, gesamt: 10, note: 1, dauerSek: 80})');
+  w.lauf('speichereTest("mathe", "klasse3", "plus-minus", {richtig: 7, gesamt: 10, note: 3, dauerSek: 150})');
   w.lauf('zeigeHauptmenue()');
 
   pruefe(w.el.kacheln.children[0].innerHTML.indexOf('340') !== -1,
@@ -292,6 +295,25 @@ console.log('\n=== TEST: Kacheln zeigen den Stand ===');
   const dreier = w.el.kacheln.children[0].innerHTML;
   pruefe(dreier.indexOf('2 Lektionen getestet') !== -1, 'zwei getestete Lektionen werden gezählt');
   pruefe(dreier.indexOf('Note 2') !== -1, 'der Notenschnitt aus 1 und 3 ist 2');
+
+  // Die Lernbox darf der Notensuche nicht in die Quere kommen
+  w.lauf(`speichereLernboxStand("englisch", "klasse5", "t5-tiere", "dog",
+          {stufe: 3, faellig: 1, richtig: 1, falsch: 0})`);
+  w.lauf('zeigeHauptmenue()');
+  w.el.tableiste.children[2].onclick();
+  pruefe(w.el.kacheln.children[0].innerHTML.indexOf('Note 2') !== -1,
+         'die Mathe-Kachel zeigt weiterhin den Notenschnitt');
+  pruefe(w.el.kacheln.children[2].innerHTML.indexOf('kein Test') !== -1,
+         'ein Lernbox-Eintrag zählt nicht als Note auf der Englisch-Kachel');
+
+  // Fächer werden getrennt gespeichert
+  w.lauf('speichereTest("englisch", "klasse5", "t5-tiere", {richtig: 6, gesamt: 10, note: 3, dauerSek: 90})');
+  w.lauf('zeigeHauptmenue()');
+  w.el.tableiste.children[2].onclick();
+  pruefe(w.el.kacheln.children[2].innerHTML.indexOf('1 Lektion getestet') !== -1,
+         'der Englisch-Test erscheint nur auf der Englisch-Kachel');
+  pruefe(w.el.kacheln.children[0].innerHTML.indexOf('2 Lektionen getestet') !== -1,
+         'und verändert die Mathe-Kachel nicht');
 
   // Das Quiz hat seine eigene Bestenliste — die lesen wir nur mit
   w.lauf(`localStorage.setItem('weltraum-quiz-bestenliste',

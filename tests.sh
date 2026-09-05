@@ -22,6 +22,12 @@ node web/schule/mathe/test/test-aufgaben.js | tail -3
 echo "▶ Mathe: Üben und Test durchspielen"
 node web/schule/mathe/test/test-ablauf.js | tail -3
 
+echo "▶ Englisch: Vokabeln und Lernbox prüfen"
+node web/schule/englisch/test/test-vokabeln.js | tail -3
+
+echo "▶ Englisch: Üben, Test und Lernbox durchspielen"
+node web/schule/englisch/test/test-ablauf.js | tail -3
+
 echo "▶ Quiz: Rettet die ISS"
 node web/quiz/rettet-die-iss/test/test-spiel.js | tail -3
 
