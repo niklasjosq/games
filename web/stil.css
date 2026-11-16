@@ -180,6 +180,16 @@
 .kachelsymbol { font-size: 46px; line-height: 1; }
 .kacheltitel { font-size: 22px; font-weight: 700; }
 .kacheltext { font-size: 16px; opacity: .8; line-height: 1.45; flex: 1; }
+.kachelalter {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 225, 77, .14);
+  border: 1px solid rgba(255, 225, 77, .5);
+  color: #fff3b0;
+  font-size: 14px;
+  font-weight: 700;
+}
 .kachelinfo {
   font-size: 15px;
   color: var(--gelb);

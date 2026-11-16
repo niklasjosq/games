@@ -239,10 +239,11 @@ console.log('\n=== TEST: Reiter und Kacheln ===');
   w.lauf(`meldeAn("${emma.profil.id}", "1234")`);
   w.lauf('zeigeHauptmenue()');
 
-  gleich(w.el.tableiste.children.length, 3, 'es gibt drei Reiter');
+  gleich(w.el.tableiste.children.length, 4, 'es gibt vier Reiter');
   pruefe(w.el.tableiste.children[0].innerHTML.indexOf('Spiele') !== -1, 'Reiter 1: Spiele');
   pruefe(w.el.tableiste.children[1].innerHTML.indexOf('Quiz') !== -1, 'Reiter 2: Quiz');
   pruefe(w.el.tableiste.children[2].innerHTML.indexOf('Schule') !== -1, 'Reiter 3: Schule');
+  pruefe(w.el.tableiste.children[3].innerHTML.indexOf('Konzentration') !== -1, 'Reiter 4: Konzentration');
   pruefe(w.el.tableiste.children[0].className.indexOf('aktiv') !== -1,
          'Spiele ist zuerst offen');
 
@@ -271,6 +272,22 @@ console.log('\n=== TEST: Reiter und Kacheln ===');
   gleich(w.el.kacheln.children.length, 1, 'im Reiter Quiz steht 1 Kachel');
   pruefe(w.el.kacheln.children[0].innerHTML.indexOf('Rettet die ISS') !== -1,
          'Rettet die ISS ist dabei');
+
+  // Konzentration-Reiter
+  w.el.tableiste.children[3].onclick();
+  gleich(w.el.kacheln.children.length, 5, 'im Reiter Konzentration stehen 5 Kacheln');
+  pruefe(w.el.kacheln.children[0].innerHTML.indexOf('Gedächtnis') !== -1, 'Gedächtnis ist dabei');
+  pruefe(w.el.kacheln.children[0].href.indexOf('konzentration/index.html#gedaechtnis') !== -1,
+         'die Kachel springt direkt in die Gruppe Gedächtnis');
+  pruefe(w.el.kacheln.children[3].innerHTML.indexOf('Lern-Memory') !== -1, 'Lern-Memory ist dabei');
+  pruefe(w.el.kacheln.children[4].innerHTML.indexOf('Aufmerksamkeit') !== -1, 'Aufmerksamkeit ist dabei');
+  pruefe(w.el.kacheln.children[4].href.indexOf('konzentration/index.html#aufmerksamkeit') !== -1,
+         'die Kachel springt direkt in die Gruppe Aufmerksamkeit');
+  pruefe(w.el.kacheln.children.every((k) => k.innerHTML.indexOf('class="kachelalter"') !== -1 &&
+                                            k.innerHTML.indexOf('8–12 Jahre') !== -1),
+         'jede Konzentrations-Kachel zeigt das Alter');
+  pruefe(w.el.kacheln.children[0].innerHTML.indexOf('Noch nicht geübt') !== -1,
+         'ohne Runde steht "Noch nicht geübt"');
 }
 
 /* ============================================================
@@ -322,6 +339,20 @@ console.log('\n=== TEST: Kacheln zeigen den Stand ===');
   w.el.tableiste.children[1].onclick();
   pruefe(w.el.kacheln.children[0].innerHTML.indexOf('610') !== -1,
          'die Quiz-Kachel zeigt die Punkte aus der Quiz-Bestenliste');
+
+  // Konzentration: höchste Stufe und Runden der Gruppe
+  w.lauf('speichereKonzentrationsAufgabe("merkfolge", 3, true)');
+  w.lauf('speichereKonzentrationsRunde("merkfolge", {stufe: 3, richtig: 6, gesamt: 8})');
+  w.lauf('zeigeHauptmenue()');
+  w.el.tableiste.children[3].onclick();
+  const gedaechtnis = w.el.kacheln.children[0].innerHTML;
+  pruefe(gedaechtnis.indexOf('Höchste Stufe: 3') !== -1, 'die Gedächtnis-Kachel zeigt die höchste Stufe');
+  pruefe(gedaechtnis.indexOf('1 Runde') !== -1, 'und eine Runde');
+  pruefe(w.el.kacheln.children[1].innerHTML.indexOf('Noch nicht geübt') !== -1,
+         'die Muster-Kachel bleibt unberührt');
+  w.el.tableiste.children[2].onclick();
+  pruefe(w.el.kacheln.children[0].innerHTML.indexOf('2 Lektionen getestet') !== -1,
+         'die Stufen stören die Notensuche der Schule nicht');
 }
 
 /* ============================================================

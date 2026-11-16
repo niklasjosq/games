@@ -1,6 +1,6 @@
 /* ============================================================
    SHELL — die Startseite der Plattform.
-   Profil auswählen, dann Kacheln in drei Tabs anzeigen.
+   Profil auswählen, dann Kacheln in vier Tabs anzeigen.
    ============================================================ */
 
 function $(id) { return document.getElementById(id); }
@@ -274,6 +274,7 @@ function zeichneKacheln() {
     kachel.innerHTML =
       '<span class="kachelsymbol">' + eintrag.symbol + '</span>' +
       '<span class="kacheltitel">' + eintrag.titel + '</span>' +
+      (eintrag.alter ? '<span class="kachelalter">🎂 ' + eintrag.alter + '</span>' : '') +
       '<span class="kacheltext">' + eintrag.beschreibung + '</span>' +
       '<span class="kachelinfo">' + kachelInfo(eintrag) + '</span>' +
       '<span class="kachelstart">Losspielen →</span>';

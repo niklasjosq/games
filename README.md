@@ -1,22 +1,22 @@
-# Creif — Spiele, Quiz und Schule
+# Creif — Spiele, Quiz, Schule und Konzentration
 
 Eine kleine Plattform fürs Heimnetz: Die Kinder öffnen im Browser eine Seite,
-wählen ihr Profil und finden dort **Spiele**, **Quiz** und **Schule** in
-je einem Reiter. Läuft auf einem Jetson Nano im Haus — ohne Internet, ohne
-Anmeldung bei irgendeinem Dienst, ohne Datenbank.
+wählen ihr Profil und finden dort **Spiele**, **Quiz**, **Schule** und
+**Konzentration** in je einem Reiter. Läuft auf einem Jetson Nano im Haus —
+ohne Internet, ohne Anmeldung bei irgendeinem Dienst, ohne Datenbank.
 
 ```
-        ┌─────────────────────────────────────────┐
-        │  🦊 Emma        [Profil wechseln]       │
-        ├─────────────────────────────────────────┤
-        │  🎮 Spiele    🧠 Quiz    📚 Schule      │
-        ├─────────────────────────────────────────┤
-        │  ┌───────────┐  ┌───────────┐           │
-        │  │ 🎅        │  │ ⛏️        │           │
-        │  │ Nikolaus  │  │ NiceCraft │           │
-        │  │ 5 Level   │  │ 3D bauen  │           │
-        │  └───────────┘  └───────────┘           │
-        └─────────────────────────────────────────┘
+        ┌────────────────────────────────────────────────────┐
+        │  🦊 Emma                   [Profil wechseln]       │
+        ├────────────────────────────────────────────────────┤
+        │  🎮 Spiele   🧠 Quiz   📚 Schule   🧩 Konzentration │
+        ├────────────────────────────────────────────────────┤
+        │  ┌───────────┐  ┌───────────┐                      │
+        │  │ 🎅        │  │ ⛏️        │                      │
+        │  │ Nikolaus  │  │ NiceCraft │                      │
+        │  │ 5 Level   │  │ 3D bauen  │                      │
+        │  └───────────┘  └───────────┘                      │
+        └────────────────────────────────────────────────────┘
 ```
 
 ## Sofort ausprobieren
@@ -122,6 +122,49 @@ Ohne Stimme ist er einfach nicht da; Tondateien braucht es keine.
 > Abschrift der Verlags-Vokabelliste. Einzelne Wörter aus dem Buch fehlen
 > deshalb, andere stehen zusätzlich drin.
 
+### 🧩 Konzentration
+
+**Konzentration** — [`web/konzentration/`](web/konzentration/)
+Übungen für 8- bis 12-Jährige, bei denen es ums **Lernen** geht, nicht ums
+Punktesammeln. Fünf Gruppen mit zwölf Übungen, jede mit dem Alter, für das sie
+gedacht ist:
+
+| Gruppe | Übung | Alter |
+|---|---|---|
+| 🧠 Gedächtnis | **Merkfolge** (Figuren nacheinander, später auch rückwärts) | 8–12 |
+| | **Gitter merken** | 8–12 |
+| ➡️ Muster | **Reihe fortsetzen** (Form, Farbe, Größe, Drehung, Anzahl, Platz) | 8–12 |
+| | **Matrix 3×3** | 10–12 |
+| 🔷 Formen | **Was passt nicht?** (Ecken, rechte Winkel, gleich lange Seiten, Symmetrie) | 8–12 |
+| | **Spiegeln und Drehen** | 9–12 |
+| 🃏 Lern-Memory | Form ↔ Name, Form ↔ Eigenschaft, Englisch ↔ Deutsch aus den Vokabeln der 5. Klasse | 8–12 |
+| 🔍 Aufmerksamkeit | **Suchbild** (alle Sterne, alle „d“ zwischen b, p und q, alle großen Dreiecke …) | 8–10 |
+| | **Fehlerbild** (Vorlage und Bild vergleichen: Form, Farbe, Größe, Drehung, Spiegelung) | 8–10 |
+| | **Linien verfolgen** (wo kommt die Linie von B an?) | 8–12 |
+| | **Zahlentabelle** (der Reihe nach antippen, rückwärts, Kreise und Quadrate im Wechsel) | 9–12 |
+| | **Pfeil oder Wort?** (zählen, ohne sich vom Wort auf dem Pfeil ablenken zu lassen) | 10–12 |
+
+* **Wie alt bist du?** — oben auf der Seite wählt das Kind sein Alter (8 bis
+  12), dann stehen nur die passenden Übungen da. Die Wahl wird im Profil
+  gemerkt, „Alle“ zeigt wieder alles. Auf jeder Übung steht ihr Alter
+
+* **Stufen statt Noten** — jede Übung hat die Stufen 1 bis 8. Zwei Treffer
+  hintereinander: eine Stufe schwerer. Zwei Fehler: eine Stufe leichter. Wer auf
+  Stufe 1 zweimal danebenliegt, bekommt ab dann vor jeder Aufgabe einen Tipp
+* Beim ersten Mal fragt die Seite nach der **Klasse** (3. bis 6.) und fängt
+  passend an — ist das Alter schon gewählt, ist die Klasse vorausgewählt
+* Vor jeder Runde stehen ein **Lernziel** und ein **Trick**, nach jedem Fehler
+  eine **Erklärung**, die die Regel oder Eigenschaft beim Namen nennt — die
+  Formen heißen immer richtig: Raute, Trapez, Drachenviereck …
+* Am Ende einer Runde: die neue Stufe, ein Rückblick auf jede Aufgabe und ein
+  Satz wie „Bei Drehungen warst du schon sicher, bei Farbwechseln lohnt sich
+  noch Üben.“
+* **Ohne Uhr** ist der Normalfall. Wer mag, schaltet „Mit Uhr“ ein
+* Die Farben sind so gewählt, dass Kinder mit Rot-Grün-Schwäche sie möglichst
+  auseinanderhalten — und keine Aufgabe hängt allein an der Farbe
+
+Die Figuren werden als SVG gezeichnet, Aufgaben jedes Mal neu gewürfelt.
+
 ## Profile
 
 Auf der Startseite legt sich jedes Kind ein Profil an: Name, ein Tierbild und
@@ -142,11 +185,11 @@ lassen sich Profile löschen und PINs zurücksetzen.
 
 ```
 web/                        ← das liefert der Webserver aus
-├── index.html, shell.js    Startseite: Profilwahl und die drei Reiter
+├── index.html, shell.js    Startseite: Profilwahl und die vier Reiter
 ├── shared/                 von allen Seiten benutzt
 │   ├── basis.css           gemeinsames Aussehen
 │   ├── profil.js           Profile anlegen, PIN prüfen, anmelden
-│   ├── speicher.js         Punkte, Bestenlisten, Lernfortschritt, Lernbox
+│   ├── speicher.js         Punkte, Bestenlisten, Lernfortschritt, Lernbox, Stufen
 │   ├── katalog.js          alle Kacheln an einer Stelle
 │   ├── schule.js           was alle Fächer teilen: Zufall, Noten, Lob
 │   └── schule.css          wie Lektionen, Aufgaben und Ergebnis aussehen
@@ -154,7 +197,10 @@ web/                        ← das liefert der Webserver aus
 ├── spiele/nicecraft/       welt.js + lib/ (three.js, mitgeliefert)
 ├── quiz/rettet-die-iss/    unverändert übernommen
 ├── schule/mathe/           aufgaben.js (Kern) + aufgaben-klasse3/5.js + mathe.js
-└── schule/englisch/        vokabeln.js (Kern) + vokabeln-klasse5.js + englisch.js
+├── schule/englisch/        vokabeln.js (Kern) + vokabeln-klasse5.js + englisch.js
+└── konzentration/          formen.js (Figuren, SVG, Gitter) + kern.js (Übungen, Stufen)
+                            + gedaechtnis/muster/geometrie/memory/aufmerksamkeit.js
+                            + konzentration.js
 
 legacy/                     die alten Python-Spiele (nur Desktop)
 deploy/                     Deploy-Skript und Anleitung für den Jetson Nano
@@ -179,6 +225,13 @@ Mehrere gültige Formen gehen als Liste: `englisch: ['colour', 'color']`.
 `./tests.sh` prüft dann, dass es das Wort nicht schon gibt und dass es seine
 eigene Antwort akzeptiert.
 
+**Eine neue Konzentrationsübung?** In einer der Übungsdateien in
+[`web/konzentration/`](web/konzentration/) mit
+`uebung('meine-uebung', { gruppe, titel, symbol, alter: [8, 12], beschreibung, lernziel, tipps, stufen, beispiel, macheAufgabe })`
+anmelden. `stufen` hat acht Einträge, `macheAufgabe(stufe)` gibt eine Aufgabe
+wie in [`kern.js`](web/konzentration/kern.js) beschrieben zurück. `./tests.sh`
+würfelt sie dann 300-mal pro Stufe und prüft jede nach.
+
 ## Tests
 
 ```bash
@@ -191,7 +244,11 @@ Nikolaus-Level (inklusive Turmklettern bis zum Sieg), **500 gewürfelte Aufgaben
 pro Mathe-Lektion** samt Nachrechnen der eigenen Lösung, **alle Englisch-Vokabeln**
 auf Dubletten und darauf, dass jede ihre eigene Antwort akzeptiert, das Wandern
 der Wörter durch die fünf Lernbox-Fächer, den kompletten Ablauf von Übung und
-Test mit Notengebung, und eine ganze Quiz-Runde mit zwei Spielern.
+Test mit Notengebung, **300 gewürfelte Aufgaben pro Stufe und
+Konzentrationsübung** (Lösung folgt aus der Regel, kein Ablenker ist zufällig
+auch richtig, Spiegelbilder sind nie bloß Drehungen, jede Memory-Aussage passt
+auf genau eine Form), das Steigen und Fallen der Stufen, und eine ganze
+Quiz-Runde mit zwei Spielern.
 
 In der Browser-Konsole geht außerdem:
 
@@ -199,6 +256,7 @@ In der Browser-Konsole geht außerdem:
 testeAufgaben(200)   // auf der Mathe-Seite: würfelt Aufgaben und rechnet nach
 testeVokabeln()      // auf der Englisch-Seite: prüft alle Vokabeln
 testeRaetsel(900)    // im Quiz: prüft die Quiz-Rätsel
+testeUebungen(200)   // auf der Konzentrations-Seite: würfelt alle Übungen und prüft sie
 ```
 
 ## Die alten Python-Spiele

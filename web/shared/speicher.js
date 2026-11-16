@@ -233,6 +233,111 @@ function speichereLernboxStand(fach, klasse, lektion, wortId, stand) {
 }
 
 /* ============================================================
+   KONZENTRATION — Stufen statt Noten
+
+   Für jede Übung (Merkfolge, Gitter, Reihe …) merken wir uns,
+   auf welcher Stufe (1 bis 8) das Kind gerade übt, welche Stufe
+   es schon einmal geschafft hat und wie viele Runden es war.
+     p.<profil>.konzentration.<uebung>
+   ============================================================ */
+
+function konzentrationSchluessel(profilId, uebungId) {
+  return 'p.' + profilId + '.konzentration.' + uebungId;
+}
+
+function leererKonzentrationsStand() {
+  return {
+    stufe: 1,
+    hoechsteStufe: 1,
+    aufgaben: 0,
+    richtig: 0,
+    runden: 0,
+    zuletzt: null,
+    letzteRunde: null
+  };
+}
+
+function holeKonzentration(uebungId, profilId) {
+  if (profilId === undefined) {
+    const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
+    if (!profil) return leererKonzentrationsStand();
+    profilId = profil.id;
+  }
+  const gespeichert = leseSpeicher(konzentrationSchluessel(profilId, uebungId), null);
+  const stand = leererKonzentrationsStand();
+  if (gespeichert && typeof gespeichert === 'object') Object.assign(stand, gespeichert);
+  return stand;
+}
+
+/* Nach jeder Aufgabe: auf welcher Stufe geht es weiter, und war sie richtig?
+   Die höchste Stufe steigt nur, wenn auf dieser Stufe etwas geklappt hat. */
+function speichereKonzentrationsAufgabe(uebungId, stufe, warRichtig, stufeGeloest) {
+  const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
+  if (!profil) return null;
+
+  const s = holeKonzentration(uebungId, profil.id);
+  s.aufgaben += 1;
+  if (warRichtig) {
+    s.richtig += 1;
+    const geloest = stufeGeloest || stufe;
+    if (geloest > s.hoechsteStufe) s.hoechsteStufe = geloest;
+  }
+  s.stufe = stufe;
+  schreibeSpeicher(konzentrationSchluessel(profil.id, uebungId), s);
+  return s;
+}
+
+/* Nach einer fertigen Runde: {stufe, richtig, gesamt, dauerSek, mitUhr} */
+function speichereKonzentrationsRunde(uebungId, runde) {
+  const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
+  if (!profil) return null;
+
+  const s = holeKonzentration(uebungId, profil.id);
+  s.runden += 1;
+  s.zuletzt = heute();
+  if (runde.stufe) s.stufe = runde.stufe;
+  s.letzteRunde = {
+    datum: heute(),
+    stufe: runde.stufe,
+    richtig: runde.richtig,
+    gesamt: runde.gesamt,
+    dauerSek: Math.round(runde.dauerSek || 0),
+    mitUhr: !!runde.mitUhr
+  };
+  schreibeSpeicher(konzentrationSchluessel(profil.id, uebungId), s);
+  return s;
+}
+
+/* Wie alt ist das Kind? Damit zeigt die Seite die passenden Übungen.
+   null = noch nicht gewählt bzw. „alle zeigen“. */
+function holeKonzentrationsAlter() {
+  const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
+  if (!profil) return null;
+  const jahre = leseSpeicher('p.' + profil.id + '.konzentrationsalter', null);
+  return Number.isInteger(jahre) && jahre >= 8 && jahre <= 12 ? jahre : null;
+}
+
+function speichereKonzentrationsAlter(jahre) {
+  const profil = typeof aktivesProfil === 'function' ? aktivesProfil() : null;
+  if (!profil) return false;
+  const schluessel = 'p.' + profil.id + '.konzentrationsalter';
+  if (jahre === null) { loescheSpeicher(schluessel); return true; }
+  return schreibeSpeicher(schluessel, jahre);
+}
+
+/* Für die Kachel: höchste Stufe und Runden über mehrere Übungen */
+function hoechsteKonzentrationsStufe(uebungIds) {
+  let hoechste = 1;
+  let runden = 0;
+  for (const id of uebungIds || []) {
+    const s = holeKonzentration(id);
+    if (s.hoechsteStufe > hoechste) hoechste = s.hoechsteStufe;
+    runden += s.runden || 0;
+  }
+  return { hoechsteStufe: hoechste, runden: runden };
+}
+
+/* ============================================================
    DAS QUIZ HAT SEINE EIGENE BESTENLISTE (die lassen wir in Ruhe)
    Wir lesen sie nur, um sie auf der Kachel anzuzeigen.
    ============================================================ */

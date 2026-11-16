@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Konzentration — Gedächtnis, Muster, Formen und Aufmerksamkeit</title>
+<link rel="stylesheet" href="../shared/basis.css">
+<link rel="stylesheet" href="../shared/schule.css">
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<div id="sterne"></div>
+
+<main id="buehne" class="weit">
+
+  <!-- ================= ÜBERSICHT ================= -->
+  <section id="uebersicht" class="bildschirm aktiv">
+    <a class="zurueck" href="../index.html">← Zurück zur Übersicht</a>
+
+    <h1 class="titel">🧩 Konzentration</h1>
+    <p class="untertitel">Gedächtnis, Muster, Formen und Aufmerksamkeit — für 8- bis 12-Jährige, mit Stufen statt Noten.</p>
+
+    <div class="karte breit">
+      <div class="wersieht">
+        <span id="uebersichtWer">Als Gast — deine Stufe wird nicht gespeichert.</span>
+      </div>
+    </div>
+
+    <div class="alterzeile">
+      <span class="alterfrage">🎂 Wie alt bist du?</span>
+      <div id="alterswahl" class="alterswahl"></div>
+    </div>
+
+    <nav id="gruppenwahl" class="gruppenwahl"></nav>
+    <p class="hinweistext" id="gruppeText"></p>
+    <p class="hinweistext" id="alterHinweis"></p>
+
+    <div id="uebungen" class="lektionen"></div>
+  </section>
+
+  <!-- ================= EINFÜHRUNG ================= -->
+  <section id="einfuehrung" class="bildschirm">
+    <h1 class="titel" id="einfTitel">Übung</h1>
+
+    <div class="karte einfkarte">
+      <div class="beispielbild" id="einfBeispiel"></div>
+      <p class="einfzeile"><b>🎯 Lernziel:</b> <span id="einfLernziel"></span></p>
+      <p class="einfzeile"><b>🎂 Alter:</b> <span id="einfAlter"></span></p>
+      <div class="einfzeile"><b>💡 So geht es leichter:</b>
+        <ul class="tippliste" id="einfTipps"></ul>
+      </div>
+
+      <div id="einfKlasseBox" class="versteckt">
+        <p class="untertitel">In welche Klasse gehst du?</p>
+        <div class="wahlreihe" id="einfKlasse"></div>
+      </div>
+
+      <p class="stufentext" id="einfStufeText">Stufe 1 von 8</p>
+      <div class="stufenleiste" id="einfStufen"></div>
+
+      <div id="einfPaartypBox" class="versteckt">
+        <p class="untertitel">Womit willst du spielen?</p>
+        <div class="wahlreihe" id="einfPaartyp"></div>
+      </div>
+
+      <div class="wahlreihe">
+        <button id="einfUhr" class="wahl">⏱️ Mit Uhr: aus</button>
+      </div>
+      <p class="hinweistext" id="einfUhrText">Ohne Uhr hast du so viel Zeit, wie du brauchst.</p>
+
+      <button id="einfLos" class="gross">Los geht’s 🧩</button>
+      <div class="knopfreihe">
+        <button id="einfZurueck" class="klein">Zurück</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AUFGABE ================= -->
+  <section id="aufgabe" class="bildschirm">
+    <div class="aufgabenkopf">
+      <span id="aufgabeTitel">Übung</span>
+      <span>Aufgabe <b id="aufgabeNummer">1</b> von <b id="aufgabeAnzahl">8</b></span>
+      <span>Stufe <b id="aufgabeStufe">1</b></span>
+      <button id="aufgabeAbbrechen" class="klein gefahr">Abbrechen</button>
+    </div>
+
+    <div class="fortschrittsleiste"><span id="aufgabeBalken"></span></div>
+    <div class="zeitleiste versteckt" id="aufgabeZeit"><span id="aufgabeZeitBalken"></span></div>
+
+    <div class="karte aufgabenkarte konzkarte">
+      <p class="tipp versteckt" id="aufgabeHilfe"></p>
+      <p class="frage konzfrage" id="aufgabeFrage"></p>
+      <div class="anzeige" id="aufgabeAnzeige"></div>
+      <div id="aufgabeAntwort"></div>
+      <div class="meldung" id="aufgabeMeldung"></div>
+      <p class="hinweistext" id="aufgabeStufeInfo"></p>
+      <p class="tipp versteckt" id="aufgabeErklaerung"></p>
+      <div class="knopfreihe mitte">
+        <button id="aufgabeRueckgaengig" class="klein versteckt">↶ Zurück</button>
+        <button id="aufgabeNochmal" class="klein versteckt">Nochmal ansehen ▶</button>
+      </div>
+      <button id="aufgabeWeiter" class="gross versteckt">Prüfen ✓</button>
+    </div>
+  </section>
+
+  <!-- ================= ERGEBNIS ================= -->
+  <section id="ergebnis" class="bildschirm">
+    <h1 class="titel">Fertig! 🎉</h1>
+
+    <div class="karte">
+      <p class="grosszahl" id="ergebnisStufe">Stufe 1</p>
+      <p class="grosszahl leiser" id="ergebnisPunkte">0 von 8 richtig</p>
+      <p class="reflexion" id="ergebnisReflexion"></p>
+      <p class="hinweistext" id="ergebnisZusatz"></p>
+
+      <h2>Rückblick</h2>
+      <ol class="rueckblick" id="ergebnisRueckblick"></ol>
+
+      <button id="ergebnisNochmal" class="gross">Noch eine Runde 🔁</button>
+      <div class="knopfreihe">
+        <button id="ergebnisAndere" class="klein">Andere Übung</button>
+        <button id="ergebnisStart" class="klein">Zur Startseite</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="../shared/speicher.js"></script>
+<script src="../shared/profil.js"></script>
+<script src="../shared/schule.js"></script>
+<script src="../schule/englisch/vokabeln.js"></script>
+<script src="../schule/englisch/vokabeln-klasse5.js"></script>
+<script src="formen.js"></script>
+<script src="kern.js"></script>
+<script src="gedaechtnis.js"></script>
+<script src="muster.js"></script>
+<script src="geometrie.js"></script>
+<script src="memory.js"></script>
+<script src="aufmerksamkeit.js"></script>
+<script src="konzentration.js"></script>
+</body>
+</html>

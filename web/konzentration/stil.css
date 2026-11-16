@@ -1,0 +1,365 @@
+/* ============================================================
+   KONZENTRATION — nur was es außer den geteilten Stilen noch
+   braucht: Gruppenwahl, Figuren, Gitter, Merkfolge, Memory.
+   Der Rest steht in shared/schule.css und shared/basis.css.
+   ============================================================ */
+
+/* ---------------- Gruppen wählen ---------------- */
+
+.gruppenwahl { display: flex; gap: 12px; flex-wrap: wrap; width: 100%; }
+
+.gruppentab {
+  flex: 1 1 180px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .07);
+  border: 2px solid transparent;
+  transition: background .15s;
+}
+.gruppentab:hover { background: rgba(255, 255, 255, .16); }
+.gruppentab b { font-size: 20px; }
+.gruppentab.aktiv {
+  background: linear-gradient(180deg, rgba(155, 107, 255, .4), rgba(90, 50, 180, .2));
+  border-color: #d3bcff;
+  box-shadow: 0 0 20px rgba(155, 107, 255, .35);
+}
+
+.wersieht { text-align: center; font-size: 16px; }
+.wersieht a { color: var(--text-leise); }
+
+/* ---------------- Figuren ---------------- */
+
+svg.form, svg.gitterbild { display: block; width: 100%; height: 100%; }
+
+/* ---------------- Einführung ---------------- */
+
+.einfkarte { max-width: 700px; }
+.beispielbild { display: flex; justify-content: center; gap: 10px; margin-bottom: 14px; }
+.beispielbild svg { width: 64px; height: 64px; }
+.einfzeile { font-size: 17px; line-height: 1.55; margin: 10px 0; }
+.tippliste { margin: 6px 0 0 22px; }
+.tippliste li { margin: 4px 0; }
+
+.wahlreihe { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 12px 0; }
+.wahl {
+  flex: 1 1 150px;
+  min-height: 56px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .07);
+  border: 2px solid transparent;
+  font-size: 17px;
+  font-weight: 600;
+}
+.wahl:hover { background: rgba(255, 255, 255, .16); }
+.wahl.aktiv {
+  background: linear-gradient(180deg, rgba(58, 160, 255, .4), rgba(20, 80, 170, .2));
+  border-color: #9ccbff;
+}
+
+.stufentext { text-align: center; margin-top: 16px; font-size: 16px; color: var(--text-leise); }
+.stufenleiste { display: flex; gap: 6px; justify-content: center; margin: 8px 0 4px; }
+.stufenpunkt {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  background: rgba(255, 255, 255, .08);
+  border: 2px solid var(--rand);
+}
+.stufenpunkt.an { background: linear-gradient(180deg, var(--gelb), #e0a800); color: #2a1d00; border-color: #fff3b0; }
+
+/* ---------------- Aufgabe ---------------- */
+
+.konzkarte { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.konzfrage { font-size: clamp(20px, 3.4vw, 27px); margin: 6px 0 12px; }
+.knopfreihe.mitte { justify-content: center; }
+#aufgabeErklaerung, #aufgabeHilfe { white-space: pre-line; width: 100%; }
+
+.zeitleiste {
+  width: 100%; max-width: 700px; height: 10px;
+  border-radius: 999px; background: rgba(255, 255, 255, .1); overflow: hidden;
+}
+.zeitleiste span { display: block; height: 100%; width: 100%; background: var(--gelb); transition: width 1s linear; }
+.zeitleiste.knapp span { background: var(--rot); }
+
+/* Was gezeigt wird */
+.anzeige { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; width: 100%; margin-bottom: 14px; }
+.anzeige.keine { display: none; }
+.feld {
+  width: clamp(60px, 13vw, 100px); height: clamp(60px, 13vw, 100px);
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, .25);
+  border: 2px solid var(--rand);
+  display: flex; align-items: center; justify-content: center;
+}
+.feld.luecke { font-size: 34px; font-weight: 800; color: var(--gelb); border-style: dashed; }
+.anzeige.matrix {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: center;
+}
+.vorlagebild { width: clamp(110px, 30vw, 160px); text-align: center; }
+.vorlagebild figcaption { font-size: 15px; color: var(--text-leise); margin-top: 4px; }
+
+/* Möglichkeiten zum Antippen */
+.optionen {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+.optionen.anzahl-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.optionen.anzahl-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.option {
+  min-height: 64px;
+  aspect-ratio: 1 / 1;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .08);
+  border: 3px solid var(--rand);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.option.nurtext { aspect-ratio: auto; min-height: 70px; font-size: 22px; font-weight: 700; }
+.option svg { flex: 1; min-height: 0; }
+.option:hover:not(:disabled) { background: rgba(255, 255, 255, .18); }
+.option:disabled { opacity: .55; }
+.option.richtig { opacity: 1; background: rgba(47, 208, 122, .25); border-color: var(--gruen); }
+.option.falsch  { opacity: 1; background: rgba(255, 84, 112, .22); border-color: var(--rot); }
+.optiontext { font-size: 14px; line-height: 1.2; }
+.option.nurtext .optiontext { font-size: 22px; }
+
+@media (max-width: 560px) {
+  .optionen, .optionen.anzahl-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .optionen.anzahl-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ---------------- Gitter ---------------- */
+
+.gitter {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.gitter.breite-6 { max-width: 480px; }
+.zelle {
+  aspect-ratio: 1 / 1;
+  min-width: 44px;
+  border-radius: 10px;
+  background: rgba(188, 212, 255, .12);
+  border: 2px solid rgba(188, 212, 255, .25);
+  font-size: 24px; font-weight: 800;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+.zelle.an { background: var(--blau); border-color: #cfe6ff; }
+.zelle.vorgabe { background: var(--gelb); border-color: #fff3b0; opacity: 1; }
+.zelle.leuchtet { background: var(--gelb); border-color: #fff; box-shadow: 0 0 18px rgba(255, 225, 77, .8); }
+.zelle.treffer { background: rgba(47, 208, 122, .6); color: #fff; }
+.zelle.zuviel { background: rgba(255, 84, 112, .55); color: #fff; }
+.zelle.vergessen { background: rgba(255, 225, 77, .25); color: var(--gelb); border-style: dashed; }
+.zelle:disabled { cursor: default; }
+
+/* Die Spiegelachse als dicke gestrichelte Linie */
+.zelle.achse-rechts::after, .zelle.achse-unten::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+.zelle.achse-rechts::after { top: -6px; bottom: -6px; right: -6px; border-right: 4px dashed var(--rot); }
+.zelle.achse-unten::after { left: -6px; right: -6px; bottom: -6px; border-bottom: 4px dashed var(--rot); }
+.zelle.achse-diag {
+  background-image: linear-gradient(45deg, transparent 46%, rgba(255, 77, 109, .9) 46%, rgba(255, 77, 109, .9) 54%, transparent 54%);
+}
+.zelle.achse-gegen {
+  background-image: linear-gradient(-45deg, transparent 46%, rgba(255, 77, 109, .9) 46%, rgba(255, 77, 109, .9) 54%, transparent 54%);
+}
+
+/* ---------------- Merkfolge ---------------- */
+
+.anzeige.folge { min-height: 150px; }
+.folgebuehne {
+  width: 140px; height: 140px;
+  border-radius: 22px;
+  background: rgba(0, 0, 0, .3);
+  border: 2px dashed var(--rand);
+  padding: 12px;
+}
+.folgebuehne.blitz { border-style: solid; border-color: var(--gelb); }
+.folgeantwort { width: 100%; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.gewaehlt { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; min-height: 52px; }
+.gewaehltfeld {
+  width: 48px; height: 48px; padding: 4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .08);
+  border: 2px solid var(--rand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text-leise);
+}
+.gewaehltfeld.leer { border-style: dashed; }
+.gewaehltfeld.stimmt { border-color: var(--gruen); background: rgba(47, 208, 122, .2); }
+.gewaehltfeld.stimmtnicht { border-color: var(--rot); background: rgba(255, 84, 112, .2); }
+.pad { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; max-width: 520px; }
+.taste {
+  aspect-ratio: 1 / 1;
+  min-height: 56px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .08);
+  border: 2px solid var(--rand);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  touch-action: manipulation;
+}
+.taste svg { flex: 1; min-height: 0; }
+.taste small { font-size: 12px; line-height: 1.1; }
+.taste:active:not(:disabled) { transform: scale(.94); }
+
+/* ---------------- Memory ---------------- */
+
+.memory { display: grid; gap: 8px; width: 100%; max-width: 640px; margin: 0 auto; }
+.mkarte {
+  aspect-ratio: 3 / 4;
+  min-height: 64px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--lila), #5a32b4);
+  border: 2px solid #d3bcff;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.mkarte .rueckseite { font-size: 28px; font-weight: 800; opacity: .7; }
+.mkarte.offen { background: rgba(20, 30, 80, .95); border-color: var(--rand); }
+.mkarte.gefunden { background: rgba(47, 208, 122, .2); border-color: var(--gruen); opacity: 1; }
+.mkarte svg { width: 100%; height: 100%; }
+.mtext { font-size: clamp(12px, 2.4vw, 17px); font-weight: 700; line-height: 1.2; word-break: break-word; }
+
+/* ---------------- Ergebnis ---------------- */
+
+.grosszahl.leiser { font-size: 21px; opacity: .85; }
+.reflexion {
+  margin: 14px 0 6px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(155, 107, 255, .15);
+  border: 1px solid rgba(155, 107, 255, .45);
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+}
+.rueckblick li.war-neutral { background: rgba(255, 210, 63, .1); border-left-color: var(--gelb); }
+
+/* ---------------- Alter ---------------- */
+
+.alterzeile {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 10px; width: 100%; margin: 4px 0 14px;
+}
+.alterfrage { font-size: 17px; font-weight: 700; }
+.alterswahl { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.alterknopf {
+  min-width: 52px; min-height: 44px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+  border: 2px solid transparent;
+  font-size: 17px; font-weight: 700;
+}
+.alterknopf:hover { background: rgba(255, 255, 255, .16); }
+.alterknopf.aktiv { background: linear-gradient(180deg, var(--gelb), #e0a800); color: #2a1d00; border-color: #fff3b0; }
+
+.altersmarke {
+  display: inline-block;
+  margin: 2px 0 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 225, 77, .14);
+  border: 1px solid rgba(255, 225, 77, .5);
+  color: #fff3b0;
+  font-size: 14px; font-weight: 700;
+}
+.wahl small { font-weight: 400; opacity: .8; }
+
+/* ---------------- Aufmerksamkeit ---------------- */
+
+/* Gitter mit Bildern (Suchbild, Fehlerbild) */
+.gitter.breite-7 { max-width: 540px; }
+.gitter.mitinhalt { gap: 5px; }
+.gitter.mitinhalt .zelle { padding: 3px; min-width: 40px; }
+.zelle svg { display: block; width: 100%; height: 100%; pointer-events: none; }
+.gitter.mitinhalt .zelle.an { box-shadow: 0 0 0 3px #cfe6ff inset; }
+.zelle .marke {
+  position: absolute; top: 2px; right: 4px;
+  font-size: 16px; font-weight: 900; line-height: 1;
+  text-shadow: 0 0 4px #000;
+}
+
+/* Fehlerbild: die Vorlage oben */
+.anzeige.vergleich { flex-direction: column; align-items: center; }
+.vergleichsbild { width: 100%; max-width: 330px; margin: 0; text-align: center; }
+.vergleichsbild figcaption { font-size: 15px; color: var(--text-leise); margin-top: 4px; }
+.minigitter {
+  display: grid; gap: 3px;
+  padding: 6px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .25);
+  border: 2px solid var(--rand);
+}
+.minizelle {
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  background: rgba(188, 212, 255, .08);
+  padding: 2px;
+}
+.minizelle svg { display: block; width: 100%; height: 100%; }
+
+/* Linien verfolgen */
+.grossbild { width: 100%; max-width: 560px; }
+svg.linienbild { display: block; width: 100%; height: auto; }
+.optionen.anzahl-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.optionen.anzahl-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+/* Pfeil oder Wort */
+.kartenbild { width: clamp(64px, 15vw, 96px); margin: 0; text-align: center; }
+.kartenbild svg { display: block; width: 100%; height: auto; }
+.kartenbild figcaption { font-size: 13px; color: var(--text-leise); }
+
+/* Zahlentabelle */
+.zahlentafel { display: grid; gap: 6px; width: 100%; max-width: 440px; margin: 0 auto; }
+.zahlfeld {
+  aspect-ratio: 1 / 1;
+  min-width: 44px;
+  border-radius: 10px;
+  background: rgba(188, 212, 255, .12);
+  border: 2px solid rgba(188, 212, 255, .3);
+  font-size: clamp(18px, 4.5vw, 28px); font-weight: 800;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.zahlfeld.sorte-kreis { border-radius: 50%; background: rgba(255, 225, 77, .22); border-color: var(--gelb); color: #fff3b0; }
+.zahlfeld.sorte-quadrat { border-radius: 4px; background: rgba(58, 160, 255, .25); border-color: var(--blau); color: #d6ecff; }
+.zahlfeld.erledigt { opacity: .3; }
+.zahlfeld.getroffen { background: rgba(47, 208, 122, .5); }
+.zahlfeld.daneben { background: rgba(255, 84, 112, .55); animation: zittern .3s; }
+.zahlfeld.vergessen { box-shadow: 0 0 0 4px var(--gelb); }
+.zahlfeld:disabled { cursor: default; }
+@keyframes zittern {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+@media (max-width: 560px) {
+  .optionen.anzahl-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

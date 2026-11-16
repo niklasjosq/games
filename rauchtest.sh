@@ -114,6 +114,31 @@ pruefe "$ARBEIT/d7.html" 'Deine Lernbox' 'die Lernbox-Karte wurde gebaut'
 pruefe "$ARBEIT/d7.html" 'Welcome to Camden Town' 'die Themes stehen als Überschriften da'
 fehlerfrei "$ARBEIT/d7.html"
 
+echo "▶ Konzentration (Gedächtnis über #gedaechtnis)"
+lade "$BASIS/konzentration/index.html#gedaechtnis" "$ARBEIT/d8.html"
+pruefe "$ARBEIT/d8.html" 'gruppentab' 'die Gruppenwahl wurde gebaut'
+pruefe "$ARBEIT/d8.html" 'Merkfolge' 'die Übungen der Gruppe Gedächtnis sind da'
+fehlerfrei "$ARBEIT/d8.html"
+
+echo "▶ Konzentration (Einführung über #spiegeln)"
+lade "$BASIS/konzentration/index.html#spiegeln" "$ARBEIT/d9.html"
+pruefe "$ARBEIT/d9.html" 'id="einfuehrung" class="bildschirm aktiv"' 'ein Link auf eine Übung öffnet die Einführung'
+pruefe "$ARBEIT/d9.html" '<svg' 'die Formen werden als SVG gezeichnet'
+fehlerfrei "$ARBEIT/d9.html"
+
+echo "▶ Konzentration (Aufmerksamkeit über #aufmerksamkeit)"
+lade "$BASIS/konzentration/index.html#aufmerksamkeit" "$ARBEIT/d10.html"
+pruefe "$ARBEIT/d10.html" 'Zahlentabelle' 'die neuen Übungen der Gruppe Aufmerksamkeit sind da'
+pruefe "$ARBEIT/d10.html" 'altersmarke' 'jede Übung zeigt ihr Alter'
+pruefe "$ARBEIT/d10.html" 'alterknopf' 'die Altersauswahl wurde gebaut'
+fehlerfrei "$ARBEIT/d10.html"
+
+echo "▶ Konzentration (Einführung über #linien)"
+lade "$BASIS/konzentration/index.html#linien" "$ARBEIT/d11.html"
+pruefe "$ARBEIT/d11.html" 'id="einfuehrung" class="bildschirm aktiv"' 'ein Link auf Linien verfolgen öffnet die Einführung'
+pruefe "$ARBEIT/d11.html" 'linienbild' 'das Beispielbild mit Linien wird gezeichnet'
+fehlerfrei "$ARBEIT/d11.html"
+
 echo "▶ Quiz: Rettet die ISS"
 lade "$BASIS/quiz/rettet-die-iss/index.html" "$ARBEIT/d6.html"
 pruefe "$ARBEIT/d6.html" 'Rettet die ISS' 'das Quiz lädt'

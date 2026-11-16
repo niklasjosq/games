@@ -256,6 +256,69 @@ console.log('\n=== TEST: Lernbox ===');
 }
 
 /* ============================================================
+   TEST 3d: Konzentrations-Stufen
+   ============================================================ */
+console.log('\n=== TEST: Konzentrations-Stufen ===');
+{
+  const w = frischeWelt();
+  const lauf = (code) => vm.runInContext(code, w);
+
+  // Als Gast: läuft, merkt sich aber nichts
+  gleich(lauf('holeKonzentration("merkfolge").stufe'), 1, 'ohne Profil beginnt man auf Stufe 1');
+  gleich(lauf('speichereKonzentrationsAufgabe("merkfolge", 2, true)'), null, 'als Gast wird nichts gespeichert');
+  gleich(lauf('speichereKonzentrationsRunde("merkfolge", {stufe: 2, richtig: 5, gesamt: 8})'), null,
+         'auch keine Runde');
+  gleich(lauf('hoechsteKonzentrationsStufe(["merkfolge", "gitter"])'), { hoechsteStufe: 1, runden: 0 },
+         'die Kachel zeigt als Gast nichts an');
+
+  const emma = lauf('neuesProfil("Emma", "🦊", "1234")');
+  lauf(`meldeAn("${emma.profil.id}", "1234")`);
+
+  lauf('speichereKonzentrationsAufgabe("merkfolge", 1, true)');
+  lauf('speichereKonzentrationsAufgabe("merkfolge", 2, true, 1)');
+  let s = lauf('holeKonzentration("merkfolge")');
+  gleich(s.aufgaben, 2, 'zwei Aufgaben gezählt');
+  gleich(s.richtig, 2, 'beide richtig');
+  gleich(s.stufe, 2, 'es geht auf Stufe 2 weiter');
+  gleich(s.hoechsteStufe, 1, 'geschafft ist aber erst Stufe 1');
+
+  lauf('speichereKonzentrationsAufgabe("merkfolge", 2, false)');
+  gleich(lauf('holeKonzentration("merkfolge").hoechsteStufe'), 1, 'ein Fehler hebt die höchste Stufe nicht');
+  lauf('speichereKonzentrationsAufgabe("merkfolge", 2, true)');
+  gleich(lauf('holeKonzentration("merkfolge").hoechsteStufe'), 2, 'ein Treffer auf Stufe 2 schon');
+
+  lauf('speichereKonzentrationsRunde("merkfolge", {stufe: 2, richtig: 6, gesamt: 8, dauerSek: 95.4, mitUhr: false})');
+  s = lauf('holeKonzentration("merkfolge")');
+  gleich(s.runden, 1, 'eine Runde gezählt');
+  pruefe(typeof s.zuletzt === 'string' && s.zuletzt.length > 0, 'das Datum der Runde ist gemerkt');
+  gleich(s.letzteRunde.dauerSek, 95, 'die Dauer ist gerundet');
+
+  gleich(lauf('holeKonzentration("gitter").aufgaben'), 0, 'eine andere Übung bleibt unberührt');
+  lauf('speichereKonzentrationsAufgabe("gitter", 4, true)');
+  gleich(lauf('hoechsteKonzentrationsStufe(["merkfolge", "gitter"])'), { hoechsteStufe: 4, runden: 1 },
+         'die Kachel nimmt die höchste Stufe der Gruppe');
+
+  // Das Alter für die Übungsauswahl
+  gleich(lauf('holeKonzentrationsAlter()'), null, 'am Anfang ist kein Alter gewählt');
+  lauf('speichereKonzentrationsAlter(10)');
+  gleich(lauf('holeKonzentrationsAlter()'), 10, 'das Alter wird gemerkt');
+  lauf(`schreibeSpeicher("p.${emma.profil.id}.konzentrationsalter", "<b>")`);
+  gleich(lauf('holeKonzentrationsAlter()'), null, 'Unsinn im Speicher gilt als „kein Alter“');
+  lauf(`schreibeSpeicher("p.${emma.profil.id}.konzentrationsalter", 40)`);
+  gleich(lauf('holeKonzentrationsAlter()'), null, 'ein Alter außerhalb von 8 bis 12 auch');
+  lauf('speichereKonzentrationsAlter(11)');
+  lauf('speichereKonzentrationsAlter(null)');
+  gleich(lauf('holeKonzentrationsAlter()'), null, '„Alle“ löscht das Alter wieder');
+  lauf('speichereKonzentrationsAlter(9)');
+
+  lauf(`loescheProfil("${emma.profil.id}")`);
+  gleich(lauf(`holeKonzentration("merkfolge", "${emma.profil.id}").runden`), 0,
+         'mit dem Profil verschwinden auch die Stufen');
+  gleich(lauf(`leseSpeicher("p.${emma.profil.id}.konzentrationsalter", null)`), null, 'und das Alter');
+  gleich(lauf('speichereKonzentrationsAlter(9)'), false, 'als Gast wird kein Alter gespeichert');
+}
+
+/* ============================================================
    TEST 4: Profil löschen räumt alles weg
    ============================================================ */
 console.log('\n=== TEST: Profil löschen ===');
@@ -316,6 +379,7 @@ console.log('\n=== TEST: Browser verbietet Speichern ===');
     gleich(lauf('holeSchulFortschritt("mathe", "klasse3", "einmaleins").tests'), [], 'Fortschritt ist leer');
     gleich(lauf('holeLernbox("englisch", "klasse5", "tiere").woerter'), {}, 'Lernbox ist leer');
     gleich(lauf('holeQuizBestenliste()'), [], 'Quiz-Bestenliste ist leer');
+    gleich(lauf('holeKonzentration("merkfolge").stufe'), 1, 'Konzentration beginnt auf Stufe 1');
   } catch (e) {
     geknallt = true;
     console.log('  ❌ Es hat geknallt: ' + e.message);

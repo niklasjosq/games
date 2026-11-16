@@ -35,6 +35,9 @@ lauf "Mathe: Aufgaben nachrechnen"                    web/schule/mathe/test/test
 lauf "Mathe: Üben und Test durchspielen"              web/schule/mathe/test/test-ablauf.js
 lauf "Englisch: Vokabeln und Lernbox prüfen"          web/schule/englisch/test/test-vokabeln.js
 lauf "Englisch: Üben, Test und Lernbox durchspielen"  web/schule/englisch/test/test-ablauf.js
+lauf "Konzentration: Formen, Stufen und Regeln"      web/konzentration/test/test-kern.js
+lauf "Konzentration: Aufgaben würfeln und nachprüfen" web/konzentration/test/test-aufgaben.js
+lauf "Konzentration: Übungsrunden durchspielen"       web/konzentration/test/test-ablauf.js
 lauf "Quiz: Rettet die ISS"                           web/quiz/rettet-die-iss/test/test-spiel.js
 
 echo ""

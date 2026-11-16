@@ -8,7 +8,8 @@
 const KATEGORIEN = [
   { id: 'spiele', titel: 'Spiele',  symbol: '🎮' },
   { id: 'quiz',   titel: 'Quiz',    symbol: '🧠' },
-  { id: 'schule', titel: 'Schule',  symbol: '📚' }
+  { id: 'schule', titel: 'Schule',  symbol: '📚' },
+  { id: 'konzentration', titel: 'Konzentration', symbol: '🧩' }
 ];
 
 const KATALOG = [
@@ -77,6 +78,66 @@ const KATALOG = [
     punkte: 'schule',
     fach: 'englisch',
     klasse: 'klasse5'
+  },
+
+  /* ---------------- KONZENTRATION ----------------
+     Alle vier Kacheln führen auf dieselbe Seite, jede in ihre Gruppe.
+     uebungen: welche Übungen zur Gruppe gehören (für die Stufe auf der Kachel)
+     alter: für welches Alter die Übungen der Gruppe gedacht sind */
+  {
+    id: 'konz-gedaechtnis',
+    kategorie: 'konzentration',
+    symbol: '🧠',
+    titel: 'Gedächtnis',
+    beschreibung: 'Merkfolge und Gitter merken: Figuren kurz ansehen und in der richtigen Reihenfolge oder am richtigen Platz wiedergeben.',
+    pfad: 'konzentration/index.html#gedaechtnis',
+    punkte: 'konzentration',
+    alter: '8–12 Jahre',
+    uebungen: ['merkfolge', 'gitter']
+  },
+  {
+    id: 'konz-muster',
+    kategorie: 'konzentration',
+    symbol: '➡️',
+    titel: 'Muster',
+    beschreibung: 'Reihen fortsetzen und das fehlende Feld im 3×3-Quadrat finden: Farbe, Form, Größe, Drehung und Anzahl folgen einer Regel.',
+    pfad: 'konzentration/index.html#muster',
+    punkte: 'konzentration',
+    alter: '8–12 Jahre',
+    uebungen: ['reihe', 'matrix']
+  },
+  {
+    id: 'konz-formen',
+    kategorie: 'konzentration',
+    symbol: '🔷',
+    titel: 'Formen',
+    beschreibung: 'Was passt nicht? Ecken, rechte Winkel und Symmetrie erkennen — und Spiegeln von Drehen unterscheiden.',
+    pfad: 'konzentration/index.html#formen',
+    punkte: 'konzentration',
+    alter: '8–12 Jahre',
+    uebungen: ['ausreisser', 'spiegeln']
+  },
+  {
+    id: 'konz-memory',
+    kategorie: 'konzentration',
+    symbol: '🃏',
+    titel: 'Lern-Memory',
+    beschreibung: 'Paare finden: Form und Name, Form und Eigenschaft oder englisches und deutsches Wort.',
+    pfad: 'konzentration/index.html#memory',
+    punkte: 'konzentration',
+    alter: '8–12 Jahre',
+    uebungen: ['memory']
+  },
+  {
+    id: 'konz-aufmerksamkeit',
+    kategorie: 'konzentration',
+    symbol: '🔍',
+    titel: 'Aufmerksamkeit',
+    beschreibung: 'Suchbild und Fehlerbild (8–10), Linien verfolgen (8–12), Zahlentabelle (9–12) und Pfeil oder Wort (10–12): genau hinsehen und dranbleiben.',
+    pfad: 'konzentration/index.html#aufmerksamkeit',
+    punkte: 'konzentration',
+    alter: '8–12 Jahre',
+    uebungen: ['suchbild', 'fehlerbild', 'linien', 'zahlentabelle', 'pfeilwort']
   }
 ];
 
@@ -105,6 +166,12 @@ function kachelInfo(eintrag) {
     const schnitt = noten.reduce(function (a, b) { return a + b; }, 0) / noten.length;
     return '📝 ' + noten.length + ' Lektion' + (noten.length === 1 ? '' : 'en') +
            ' getestet · Schnitt: Note ' + (Math.round(schnitt * 10) / 10).toString().replace('.', ',');
+  }
+
+  if (eintrag.punkte === 'konzentration') {
+    const s = hoechsteKonzentrationsStufe(eintrag.uebungen);
+    if (s.runden === 0) return 'Noch nicht geübt';
+    return '🧩 Höchste Stufe: ' + s.hoechsteStufe + ' · ' + s.runden + ' Runde' + (s.runden === 1 ? '' : 'n');
   }
 
   return '';
