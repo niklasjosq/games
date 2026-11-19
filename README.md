@@ -284,3 +284,10 @@ python legacy/nikolaus_spiel.py
 three.js (MIT-Lizenz) liegt in
 [`web/spiele/nicecraft/lib/`](web/spiele/nicecraft/lib/) im Repo, damit die
 Kinder-Geräte kein Internet brauchen.
+
+## Lizenz
+
+Creif steht unter der **MIT-Lizenz** — frei benutzen, verändern und
+weitergeben, solange der Lizenzhinweis dabeibleibt. Der vollständige Text
+steht in [`LICENSE`](LICENSE). Für three.js gilt dessen eigene Lizenz in
+[`web/spiele/nicecraft/lib/LIZENZ-three.txt`](web/spiele/nicecraft/lib/LIZENZ-three.txt).
